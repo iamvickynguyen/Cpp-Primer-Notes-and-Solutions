@@ -25,3 +25,19 @@ for (unsigned int u = 10; u >= 0; --u)
   - Begin with 0 is octal, 0x or 0X is hex (i.e., 20 = 024 = 0x14)
   - Char and char string with prefix: `u`, `U`, `L`, `u8` (i.e., `u8"hi"`, `L'a'`)
   - Int with suffix: `u` or `U`, `l` or `L`, `ll` or `LL`, `f` or `F`, `l` or `L` (i.e., `1E-3F`, `3.14159L`, `42ULL`)
+
+- Avoid uninitialized variables because they are hard to debug and what happens to them is undefined.
+
+- Declaration: makes a name known to the program
+- Definition: creates the associated entity, also allocates storage and may provide the variable with an initial value
+- To obtain a declaration that is not also a definition, use `extern` and may not provide an explicit initializer
+
+Example:
+
+```c
+extern int i; // declares but does not define i
+int j; // declares and defines j
+```
+
+- `extern` that has an initializer is a definition (i.e., `extern double pi = 3.14; // definition`)
+
