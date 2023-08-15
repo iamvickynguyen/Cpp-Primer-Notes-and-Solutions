@@ -66,6 +66,33 @@ Example:
 int &refVal = 10; // error: initializer must be an object
 ```
 
+- Pointer is a compound type that "point to" another type
+- Pointer is an object, which is different from reference
+- When a pointer points to an object, use deference operator (i.e., `*`) to access that object
+
+Example
+
+```c
+int ival = 42;
+int *p = &ival; // p holds the address of ival; p is a pointer to ival
+cout << *p; // * yields the object to which p points; prints 42
+```
+
+- Note: some symbols have many meanings
+
+Example:
+
+```c
+int i = 42;
+int &r = i; // r is a reference
+int *p;
+p = &i; // & is the address-of operator
+*p = i; // * is the deference operator
+int &r2 = *p; // & is part of the declaration, * is the deference operator
+```
+
+- `void*`is a special pointer that can hold address of any object
+
 ## Exercises
 
 ### Exercise 2.15
@@ -114,4 +141,39 @@ std::cout << i << " " << ri << std::endl;
 
 ```
 10 10
+```
+
+### Exercise 2.18
+
+Write code to change the value of a pointer. Write code to
+change the value to which the pointer points.
+
+```c
+#include <iostream>
+
+int main() {
+  int i = 1;
+  int *p = &i;
+  *p = 2;
+  std::cout << i << '\n';
+  return 0;
+}
+```
+
+### Exercise 2.21
+
+Explain each of the following definitions. Indicate whether any are illegal and, if so, why.
+
+int i = 0;
+
+a) double* dp = &i;
+
+b) int *ip = i;
+
+c) int *p = &i;
+
+```
+a) illegal, cannot convert int* to double*
+b) illegal, cannot convert int to int*
+c) legal
 ```
