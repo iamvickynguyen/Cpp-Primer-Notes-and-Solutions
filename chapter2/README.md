@@ -93,6 +93,42 @@ int &r2 = *p; // & is part of the declaration, * is the deference operator
 
 - `void*`is a special pointer that can hold address of any object
 
+- `int* p1, p2; // p1 is a pointer to int; p2 is an int`
+
+- Writing `int* p;` is somewhat misleading because the base type of variable `p` is `int`, not `int*`. `*` modifies the type of `p`
+
+- There is no limits to the number of type modifiers (i.e., `*`, `**`, `***`, etc.)
+
+Example:
+
+```c
+int ival = 1024;
+int *pi = &ival; // pi points to an int
+int **ppi = &pi; // ppi points to a pointer to an int
+```
+
+```c
+// Deferencing pointers
+cout << "The value of ival\n"
+    << "direct value: " << ival << "\n"
+    << "indirect value: " << *pi << "\n" 
+    << "doubly indirect value: " << **ppi << endl;
+```
+
+- We can have a reference to a pointer because a pointer is an object
+
+Example:
+
+```c
+int i = 42;
+int *p; // p is a pointer to int
+int *&r = p; // r is a reference to the pointer p
+r = &i; // r refers to a pointer; assigning &i to r makes p point to i
+*r = 0; // dereferencing r yields i, the object to which p points; changes i to 0
+```
+
+- To understand complicated pointer or reference declarations, read them from right to left
+
 ## Exercises
 
 ### Exercise 2.15
@@ -176,4 +212,30 @@ c) int *p = &i;
 a) illegal, cannot convert int* to double*
 b) illegal, cannot convert int to int*
 c) legal
+```
+
+### Exercise 2.24
+
+Why is the initialization of p legal but that of lp illegal?
+
+int i = 42; void \*p = &i; long \*lp = &i;
+
+```
+void* is a special pointer that can point to any data type
+```
+
+### Exercise 2.25
+
+Determine the types and values of each of the following variables.
+
+a) int* ip, i, &r = i;
+
+b) int i, \*ip = 0;
+
+c) int* ip, ip2;
+
+```
+a) ip, r, i: base type int, ip is a pointer to int, i is an int, r is a reference to i
+b) i, ip: base type int, value of i is 0, ip is a null pointer
+c) ip, ip2: base type int, ip is a pointer to int, ip2 is an int 
 ```
