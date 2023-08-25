@@ -129,6 +129,40 @@ r = &i; // r refers to a pointer; assigning &i to r makes p point to i
 
 - To understand complicated pointer or reference declarations, read them from right to left
 
+## 2.4 `const` Qualifier
+
+- `const` object must be initialized because we can't change the value of a `const`
+- By default, `const` objects are loval to a file
+- Use `extern` to share a `const` object among multiple files
+
+Example:
+
+```c
+// file_1.cc defines and initializes a const that is accessible to other files extern const int bufSize = fcn();
+// file_1.h
+extern const int bufSize; // same bufSize as defined in file_1.cc
+```
+
+- `const` reference means reference to `const`. There is no such thing is `const` reference as a reference is not an object, we cannot make a reference itself `const`
+
+Examples:
+
+```c
+const int ci = 1024;
+const int &r1 = ci; // ok: both reference and underlying object are const
+r1 = 42; // error: r1 is a reference to const
+int &r2 = ci; // error: non const reference to a const object
+```
+
+```c
+int i = 42;
+const int &r1 = i; // we can bind a const int& to a plain int object
+const int &r2 = 42; // ok: r1 is a reference to const
+const int &r3 = r1 * 2; // ok: r3 is a reference to const
+int &r4 = r * 2; // error: r4 is a plain, non const reference
+```
+
+
 ## Exercises
 
 ### Exercise 2.15
@@ -238,4 +272,23 @@ c) int* ip, ip2;
 a) ip, r, i: base type int, ip is a pointer to int, i is an int, r is a reference to i
 b) i, ip: base type int, value of i is 0, ip is a null pointer
 c) ip, ip2: base type int, ip is a pointer to int, ip2 is an int 
+```
+
+### Exercise 2.26
+
+Which of the following are legal? For those that are illegal, explain why.
+
+a) const int buf;
+
+b) int cnt = 0;
+
+c) const int sz = cnt;
+
+d) ++cnt; ++sz;
+
+```
+a) Illegal, const object must be initialized
+b) Legal
+c) Legal
+d) ++cnt is legal, ++sz is illegal because const object cannot be modified
 ```
