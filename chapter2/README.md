@@ -143,6 +143,8 @@ Example:
 extern const int bufSize; // same bufSize as defined in file_1.cc
 ```
 
+#### 2.4.1. References to `const`
+
 - `const` reference means reference to `const`. There is no such thing is `const` reference as a reference is not an object, we cannot make a reference itself `const`
 
 Examples:
@@ -162,6 +164,80 @@ const int &r3 = r1 * 2; // ok: r3 is a reference to const
 int &r4 = r * 2; // error: r4 is a plain, non const reference
 ```
 
+- A reference to `const` may refer to an object that is NOT `const`. Thus, binding a reference to `const` to an object says nothing about whether the object is `const` or not.
+
+Example:
+
+```c
+int i = 42;
+int &r1 = i; // r1 bound to i
+const int &r2 = i; // r2 also bound to i; but cannot be used to change i
+r1 = 0; // r1 is not const; i is now 0
+r2 = 0; // error: r2 is a reference to const
+```
+
+#### 2.4.2 Pointers and `const`
+
+- A pointer to `const` may not be used to change the object
+
+Example:
+
+```c
+const double pi = 3.14; // pi is const; its value may not be changed
+double *ptr = &pi; // error: ptr is a plain pointer
+const double *cptr = &pi; // ok: cptr may point to a double that is const
+*cptr = 42; // error: cannot assign to *cptr
+```
+
+- A pointer to `const` can points to a `nonconst` object
+
+Example:
+
+```c
+double dval = 3.14; // dval is a double; its value can be changed
+const double *cptr = &dval; // ok, but can't change dval through cptr
+```
+
+- A `const` pointer must be initialized, and its value (i.e., the address that it holds) may not be changed.
+- A pointer to `const` is indicated by putting the `const` after `*`. This means it is a pointer, not a pointed-to-type that is `const`.
+
+Example:
+
+```c
+int errNumb = 0;
+int *const curErr = &errNumb; // curErr will always point to errNumb
+const double pi = 3.14159;
+const double *const pip = &pi; // pip is a const pointer to a const object
+```
+
+- In the example above, `pip` is a `const` pointer to `const`, so neither the value of the object (i.e., `pi`) nor the addresses stored in `pip` can be changed. However, `curErr` addresses a plain, `nonconst` int, so `curErr` can be used to change the value of `errNumb`.
+
+Example:
+
+```c
+*pip = 2.72; // error; pip is a pointer to const
+// if the object to which curErr points (i.e., errNumb) is nonzero
+if (*curErr) {
+ errorHandler();
+ *curErr = 0; // ok: reset the value of the object to which curErr is bound
+}
+```
+
+#### 2.4.3 Top-level `const`
+
+- Top-level `const` indicates the pointer itself is a `const`
+- Low-level `const` indicates the pointer can point to a `const` object
+
+Example:
+
+```c
+int i = 0;
+int *const p1 = &i; // we can't change the value of p1; const is top-level
+const int ci = 42; // we cannot change ci; const is top-level
+const int *p2 = &ci; // we can change p2; const is low-level
+const int *const p3 = p2; // right-most const is top-level, left-most is not
+const int &r = ci; // const in reference types is always low-level
+```
 
 ## Exercises
 
@@ -291,4 +367,79 @@ a) Illegal, const object must be initialized
 b) Legal
 c) Legal
 d) ++cnt is legal, ++sz is illegal because const object cannot be modified
+```
+
+### Exercise 2.27
+
+ Which of the following initializations are legal? Explain why.
+
+a) int i = -1, \&r = 0;
+
+b) int \*const p2 = \&i2;
+
+c) const int i = -1, \&r = 0;
+
+d) const int \*const p3 = \&i2;
+
+e) const int \*p1 = \&i2;
+
+f) const int \&const r2;
+
+g) const int i2 = i, \&r = i;
+
+```c
+a) illegal, r must refer to an object
+b) legal
+c) legal, r is a reference to const
+d) legal
+e) legal
+f) illegal, r2 is reference that cannot be const
+g) legal
+```
+
+### Exercise 2.28
+
+Explain the following definitions. Identify any that are illegal.
+
+a) int i, \*const cp;
+
+b) int \*p1, \*const p2;
+
+c) const int ic, \&r = ic;
+
+d) const int \*const p3;
+
+e) const int \*p;
+
+```c
+a) illegal, cp is a const pointer and it must be initialized
+b) illegal, p2 is a const pointer and it must be initialized
+c) illegal, ic must be initialized
+d) illegal, p3 is a const pointer and it must be initialized
+e) legal, p is a pointer to const int
+```
+
+### Exercise 2.29
+
+Using the variables in the previous exercise, which of the following assignments are legal? Explain why.
+
+a) i = ic;
+
+b) p1 = p3;
+
+c) p1 = \&ic;
+
+d) p3 = \&ic;
+
+e) p2 = p1;
+
+f) ic = \*p3;
+
+```c
+a) legal
+b) illegal, p1 is a plain pointer so it cannot point to a const pointer
+c) illegal, ic is a const int
+d) illegal, p3 is a const pointer
+e) illegal, p2 is a const pointer
+f) illegal, ic is a const int
 ```
