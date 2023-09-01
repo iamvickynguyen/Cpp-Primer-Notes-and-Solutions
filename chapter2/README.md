@@ -260,6 +260,102 @@ int &r = ci; // error: can't bind an ordinary int& to a const int object
 const int &r2 = i; // ok: can bind const int& to plain int
 ```
 
+#### 2.4.4 `constexpr` and Constant Expressions
+
+- The value of a constant expression is evaluated at compile time
+- `constexpr` is used to ask the compiler to verify if a variable is a constantexpression
+- `constexpr` variables are implicitly `const` and must be initialized by constant expressions
+
+Example:
+
+```c
+constexpr int mf = 20; // 20 is a constant expression
+constexpr int limit = mf + 1; // mf + 1 is a constant expression
+constexpr int sz = size(); // ok only if size is a constexpr function
+```
+
+- When declaring a pointer with `constexpr`, `constexpr` imposes a top-level `const`
+
+Example:
+
+```c
+const int *p = nullptr; // p is a pointer to a const int
+constexpr int *q = nullptr; // q is a const pointer to int
+```
+
+## 2.5 Dealing with Types
+
+### 2.5.1 Type Aliases
+
+- Traditionally, use `typedef`
+
+Example:
+
+```c
+typedef double wages; // wages is a synonym for double
+typedef wages base, *p; // base is a synonym for double, p for double*
+```
+
+- The new way, use alias declaration (i.e., `using` and `=`)
+
+Example:
+
+```c
+using SI = Sales_item; // SI is a synonym for Sales_item
+```
+
+- Using type aliases with compound types and `const` can yield surprising results
+
+Example:
+
+```c
+typedef char *pstring;
+const pstring cstr = 0; // cstr is a constant pointer to char
+const pstring *ps; // ps is a pointer to a constant pointer to char
+```
+
+- Conceptually replacing the alias with its type can be incorrect
+
+Example:
+
+```c
+const char *cstr = 0; // wrong interpretation of const pstring cstr
+```
+
+### 2.5.2 The `auto` Type Specifier
+
+- Let the compiler figure out the type of an expression for us by using `auto`
+
+Example:
+
+```c
+auto i = 0, *p = &i; // ok: i is int and p is a pointer to int
+auto sz = 0, pi = 3.14; // error: inconsistent types for sz and pi
+```
+
+- `auto` ignores top-level `const`
+
+Example:
+
+```c
+int i = 0;
+const int ci = i, &cr = ci;
+auto b = ci; // b is an int (top-level const in ci is dropped)
+auto c = cr; // c is an int (cr is an alias for ci whose const is top-level)
+auto d = &i; // d is an int*(& of an int object is int*)
+auto e = &ci; // e is const int*(& of a const object is low-level const)
+```
+
+- Remember a reference or pointer is part of a declarator, not the base type
+
+Example:
+
+```c
+auto k = ci, &l = i; // k is int; l is int&
+auto &m = ci, *p = &ci; // m is a const int&;p is a pointer to const int
+auto &n = i, *p2 = &ci; // error: type deduced from i is int; type deduced from &ci is const int
+```
+
 ## Exercises
 
 ### Exercise 2.15
@@ -492,4 +588,46 @@ p1 = p2; // Error: p2 has low-level const but p1 doesn't
 p2 = p1; // Ok: can convert int* to const int*
 p1 = p3; // Error: p3 has low-level const but p1 doesn't
 p2 = p3; // Ok: top-level const can be ignored, p2 has p3 have the same low-level const
+```
+
+### Exercise 2.32
+
+Is the following code legal or not? If not, how might you make it legal?
+
+int null = 0, \*p = null;
+
+```c
+Illegal
+Fix: int null = 0; *p = nullptr; // or int *p = 0;
+```
+
+### Exercise 2.33
+
+Using the variable definitions from this section, determine what happens in each of these assignments:
+
+```c
+a = 42; // Ok
+b = 42; // Ok
+c = 42; // Ok
+d = 42; // Error, d is int*, fix: *d = 42;
+e = 42; // Error, e is const int*, fix: e = &c
+g = 42; // Error, g is const int& that is bound to ci
+```
+
+### Exercise 2.35
+
+Determine the types deduced in each of the following definitions. Once you’ve figured out the types, write a program to see whether you were correct.
+
+const int i = 42;
+
+auto j = i; const auto \&k = i; auto \*p = \&i;
+
+const auto j2 = i, \&k2 = i;
+
+```c
+j is int
+k is const int&
+p is const int*
+j2 is const int
+k2 is const int&
 ```
