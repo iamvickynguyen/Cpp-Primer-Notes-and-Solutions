@@ -239,6 +239,27 @@ const int *const p3 = p2; // right-most const is top-level, left-most is not
 const int &r = ci; // const in reference types is always low-level
 ```
 
+- When copying an object, top-level `const` is ignored
+ 
+Example:
+
+```c
+i = ci; // ok: copying the value of ci; top-level const in ci is ignored
+p2 = p3; // ok: pointed-to type matches; top-level const in p3 is ignored
+```
+
+- When copying an object, low-level `const` is not ignored
+
+Example:
+
+```c
+int *p = p3; // error: p3 has a low-level const but p doesn't
+p2 = p3; // ok: p2 has the same low-level const qualification as p3
+p2 = &i; // ok: we can convert int* to const int*
+int &r = ci; // error: can't bind an ordinary int& to a const int object
+const int &r2 = i; // ok: can bind const int& to plain int
+```
+
 ## Exercises
 
 ### Exercise 2.15
@@ -442,4 +463,33 @@ c) illegal, ic is a const int
 d) illegal, p3 is a const pointer
 e) illegal, p2 is a const pointer
 f) illegal, ic is a const int
+```
+
+### Exercise 2.30
+
+For each of the following declarations indicate whether the object being declared has top-level or low-level const.
+
+```c
+const int v2 = 0; int v1 = v2;
+int *p1 = &v1, &r1 = v1;
+const int *p2 = &v2, *const p3 = &i, &r2 = v2; 
+```
+
+```c
+v2 has top-level const
+p2 has low-level const
+p3 has both low-level and top-level consts
+r2 has low-level const
+```
+
+### Exercise 2.31
+
+Given the declarations in the previous exercise determine whether the following assignments are legal. Explain how the top-level or low-level const applies in each case.
+
+```c
+r1 = v2; // Ok: top-level const can be ignored
+p1 = p2; // Error: p2 has low-level const but p1 doesn't
+p2 = p1; // Ok: can convert int* to const int*
+p1 = p3; // Error: p3 has low-level const but p1 doesn't
+p2 = p3; // Ok: top-level const can be ignored, p2 has p3 have the same low-level const
 ```
