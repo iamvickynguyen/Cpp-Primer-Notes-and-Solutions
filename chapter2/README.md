@@ -129,7 +129,7 @@ r = &i; // r refers to a pointer; assigning &i to r makes p point to i
 
 - To understand complicated pointer or reference declarations, read them from right to left
 
-## 2.4 `const` Qualifier
+## 2.4. `const` Qualifier
 
 - `const` object must be initialized because we can't change the value of a `const`
 - By default, `const` objects are loval to a file
@@ -143,7 +143,7 @@ Example:
 extern const int bufSize; // same bufSize as defined in file_1.cc
 ```
 
-#### 2.4.1. References to `const`
+### 2.4.1. References to `const`
 
 - `const` reference means reference to `const`. There is no such thing is `const` reference as a reference is not an object, we cannot make a reference itself `const`
 
@@ -176,7 +176,7 @@ r1 = 0; // r1 is not const; i is now 0
 r2 = 0; // error: r2 is a reference to const
 ```
 
-#### 2.4.2 Pointers and `const`
+### 2.4.2. Pointers and `const`
 
 - A pointer to `const` may not be used to change the object
 
@@ -223,7 +223,7 @@ if (*curErr) {
 }
 ```
 
-#### 2.4.3 Top-level `const`
+### 2.4.3. Top-level `const`
 
 - Top-level `const` indicates the pointer itself is a `const`
 - Low-level `const` indicates the pointer can point to a `const` object
@@ -260,7 +260,7 @@ int &r = ci; // error: can't bind an ordinary int& to a const int object
 const int &r2 = i; // ok: can bind const int& to plain int
 ```
 
-#### 2.4.4 `constexpr` and Constant Expressions
+### 2.4.4. `constexpr` and Constant Expressions
 
 - The value of a constant expression is evaluated at compile time
 - `constexpr` is used to ask the compiler to verify if a variable is a constantexpression
@@ -283,9 +283,9 @@ const int *p = nullptr; // p is a pointer to a const int
 constexpr int *q = nullptr; // q is a const pointer to int
 ```
 
-## 2.5 Dealing with Types
+## 2.5. Dealing with Types
 
-### 2.5.1 Type Aliases
+### 2.5.1. Type Aliases
 
 - Traditionally, use `typedef`
 
@@ -322,7 +322,7 @@ Example:
 const char *cstr = 0; // wrong interpretation of const pstring cstr
 ```
 
-### 2.5.2 The `auto` Type Specifier
+### 2.5.2. The `auto` Type Specifier
 
 - Let the compiler figure out the type of an expression for us by using `auto`
 
@@ -355,6 +355,51 @@ auto k = ci, &l = i; // k is int; l is int&
 auto &m = ci, *p = &ci; // m is a const int&;p is a pointer to const int
 auto &n = i, *p2 = &ci; // error: type deduced from i is int; type deduced from &ci is const int
 ```
+
+### 2.5.3. The `decltype` Type Specifier
+
+- `decltype` is used to define a variable with a type the compiler deduces from an expresson, but do not want to use that expression to initialize the variable
+
+Example
+
+```c
+decltype(f()) sum = x; // sum has whatever type f returns
+```
+
+- Note that the compiler does not call `f`, but just use the type that `f` returns
+- `decltype` returns the type of the variable including top-level `const`
+
+Example:
+
+```c
+const int ci = 0, &cj = ci;
+decltype(ci) x = 0; // x has type const int
+decltype(cj) y = x; // y has type const int& and is bound to x
+decltype(cj) z; // error: z is a reference and must be initialized
+```
+
+- When applying `decltype` to an expression that is not a variable, we get the type that expression yields
+
+Example:
+
+```c
+// decltype of an expression can be a reference type
+int i = 42, *p = &i, &r = i;
+decltype(r + 0) b; // ok: addition yields an int; b is an (uninitialized) int
+decltype(*p) c; // error: c is int& and must be initialized
+```
+
+- `decltype((variable))` (note, double parentheses) is always a reference type, but `decltype(variable)` is a reference type only if variable is a reference
+
+Example:
+
+```c
+// decltype of a parenthesized variable is always a reference
+decltype((i)) d; // error: d is int& and must be initialized
+decltype(i) e; // ok: e is an (uninitialized) int
+```
+
+## 2.6. Defining Our Own Data Structures
 
 ## Exercises
 
@@ -633,3 +678,61 @@ k2 is const int&
 ```
 
 [Code](e2_35.cpp)
+
+### Exercise 2.36
+
+In the following code, determine the type of each variable and the value each variable has when the code finishes:
+
+int a = 3, b = 4;
+
+decltype(a) c = a;
+
+decltype((b)) d = a;
+
+++c;
+
+++d;
+
+```c
+a is int, its value is 4
+b is int, its value is 4
+c is int, its value is 4
+d is int&, its value is 4
+```
+
+### Exercise 2.37
+
+Assignment is an example of an expression that yields a reference type. The type is a reference to the type of the left-hand operand. That is, if i is an int, then the type of the expression i = x is int&. Using that knowledge, determine the type and value of each variable in this code:
+
+int a = 3, b = 4;
+
+decltype(a) c = a;
+
+decltype(a = b) d = a;
+
+```c
+a is int, its value is 3
+b is int, its value is 4
+c is int, its value is 3
+d is int&, its value is 3
+```
+
+### Exercise 2.38
+
+Describe the differences in type deduction between decltype and auto. Give an example of an expression where auto and decltype will deduce the same type and an example where they will deduce differing types.
+
+> `auto` follows the template argument deduction rules and is always an object type. `decltype` returns the exact type of the return value. (Reference [stackoverflow](https://stackoverflow.com/questions/21369113/what-is-the-difference-between-auto-and-decltypeauto-when-returning-from-a-fun)). Also `auto` ignores top-level `const`, whereas `decltype` keeps it.
+
+```c
+int a = 1, &b = a;
+auto c = a; // c is int
+decltype(a) d = a; // d is int
+auto e = a; // e is int
+decltype(b) f = a; // f is int&
+```
+
+```c
+const int a = 2;
+auto b = a; // b is int
+decltype c = a; // c is const int
+```
