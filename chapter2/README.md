@@ -1,5 +1,48 @@
 # Chapter 2: Variables and Basic Types
 
+<!-- vim-markdown-toc GFM -->
+
+* [2.1. Primitive Built-in Types](#21-primitive-built-in-types)
+* [2.2. Variables](#22-variables)
+* [2.3. Compound Types](#23-compound-types)
+* [2.4. `const` Qualifier](#24-const-qualifier)
+    * [2.4.1. References to `const`](#241-references-to-const)
+    * [2.4.2. Pointers and `const`](#242-pointers-and-const)
+    * [2.4.3. Top-level `const`](#243-top-level-const)
+    * [2.4.4. `constexpr` and Constant Expressions](#244-constexpr-and-constant-expressions)
+* [2.5. Dealing with Types](#25-dealing-with-types)
+    * [2.5.1. Type Aliases](#251-type-aliases)
+    * [2.5.2. The `auto` Type Specifier](#252-the-auto-type-specifier)
+    * [2.5.3. The `decltype` Type Specifier](#253-the-decltype-type-specifier)
+* [2.6. Defining Our Own Data Structures](#26-defining-our-own-data-structures)
+    * [2.6.1. Defining the Sales\_data Type](#261-defining-the-sales_data-type)
+    * [2.6.3. Writing Our Own Header Files](#263-writing-our-own-header-files)
+* [Exercises](#exercises)
+    * [Exercise 2.15](#exercise-215)
+    * [Exercise 2.16](#exercise-216)
+    * [Exercise 2.17](#exercise-217)
+    * [Exercise 2.18](#exercise-218)
+    * [Exercise 2.21](#exercise-221)
+    * [Exercise 2.24](#exercise-224)
+    * [Exercise 2.25](#exercise-225)
+    * [Exercise 2.26](#exercise-226)
+    * [Exercise 2.27](#exercise-227)
+    * [Exercise 2.28](#exercise-228)
+    * [Exercise 2.29](#exercise-229)
+    * [Exercise 2.30](#exercise-230)
+    * [Exercise 2.31](#exercise-231)
+    * [Exercise 2.32](#exercise-232)
+    * [Exercise 2.33](#exercise-233)
+    * [Exercise 2.35](#exercise-235)
+    * [Exercise 2.36](#exercise-236)
+    * [Exercise 2.37](#exercise-237)
+    * [Exercise 2.38](#exercise-238)
+    * [Exercise 2.40](#exercise-240)
+    * [Exercise 2.41](#exercise-241)
+    * [Exercise 2.42](#exercise-242)
+
+<!-- vim-markdown-toc -->
+
 ## 2.1. Primitive Built-in Types
 
 - Avoid undefined and implementation-defined behaviour:
