@@ -401,6 +401,53 @@ decltype(i) e; // ok: e is an (uninitialized) int
 
 ## 2.6. Defining Our Own Data Structures
 
+### 2.6.1. Defining the Sales\_data Type
+
+- Use `struct` or `class` (mentioned later). Remember semicolon at the end
+
+Example:
+
+```c
+struct Sales_data {
+  std::string bookNo;
+  unsigned units_sold = 0;
+  double revenue = 0.0;
+};
+```
+
+- It is a bad idea to define an object as part of a class definition. It obscures the code by combining the definitions of 2 different entities - the class and a variable - in a single statement
+
+Example:
+
+```c
+struct Sales_data { /* ... */ } accum, trans, *salesptr;
+// equivalent, but better way to define these objects
+struct Sales_data { /* ... */ };
+Sales_data accum, trans, *salesptr;
+```
+
+### 2.6.3. Writing Our Own Header Files
+
+- Whenever a header is updated, the source files that use that header must be recompiled to get the new or changed declarations
+- When a preprocessor sees `#include`, it replaces `#include` with the content of the specified header
+- Preprocessor variables have 1 of 2 states: defined (`#ifdef`) or not defined (`#ifndef`). Use this to guard against multiple inclusions
+- Preprocessor variable names do not respect C++ scoping rules
+- Best practices, all headers should have guards, even if they aren’t (yet) included by another header
+
+Example:
+
+```c
+#ifndef SALES_DATA_H
+#define SALES_DATA_H
+#include <string>
+struct Sales_data {
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+};
+#endif
+```
+
 ## Exercises
 
 ### Exercise 2.15
@@ -736,3 +783,112 @@ const int a = 2;
 auto b = a; // b is int
 decltype c = a; // c is const int
 ```
+
+### Exercise 2.40
+
+Write your own version of the Sales\_data class.
+
+```c
+struc Sales_data {
+    std::string bookNo;
+    std::string bookName;
+    unsigned units_sold = 0;
+    double revenue = 0.0;
+    double price = 0.0;
+};
+```
+
+### Exercise 2.41
+
+Use your Sales\_data class to rewrite the exercises in §1.5.1 (p. 22), § 1.5.2 (p. 24), and § 1.6 (p. 25). For now, you should define your Sales\_data class in the same file as your main function.
+
+```c
+#include <iostream>
+#include <string>
+
+struct Sales_data {
+	std::string bookNo;
+	unsigned units_sold = 0;
+	double revenue = 0.0;
+};
+```
+
+```c
+// 1.5.1
+int main() {
+	Sales_data data1;
+	double price;
+	std::cin >> data1.bookNo >> data1.units_sold >> price;
+	data1.revenue = data1.units_sold * price;
+	std::cout << "Revenue: " << data1.revenue << '\n';
+	return 0;
+}
+
+```
+
+```c
+// 1.5.2
+int main() {
+	Sales_data data1, data2;
+	double price;
+
+	std::cin >> data1.bookNo >> data1.units_sold >> price;
+	data1.revenue = data1.units_sold * price;
+
+	std::cin >> data2.bookNo >> data2.units_sold >> price;
+	data2.revenue = data2.units_sold * price;
+
+	if (data1.bookNo == data2.bookNo) {
+		data1.revenue += data2.revenue;
+		data1.units_sold += data2.units_sold;
+		std::cout << "Total revenue: " << data1.revenue << '\n';
+	} else {
+		std::cout << "Different items\n";
+	}
+    
+    return 0;
+}
+```
+
+```c
+// 1.5.3
+int main() {
+	Sales_data total;
+	double price;
+
+	if (std::cin >> total.bookNo >> total.units_sold >> price) {
+		total.revenue = total.units_sold * price;
+
+		Sales_data data;
+		while (std::cin >> data.bookNo >> data.units_sold >> price) {
+			if (data.bookNo == total.bookNo) {
+				total.units_sold += data.units_sold;
+				total.revenue += data.units_sold * price;
+			} else {
+				// Print the result of the previous book
+				std::cout << "Revenue of bookNo " << total.bookNo << ": " << total.revenue << '\n';
+				data.revenue = data.units_sold * price;
+				total = data; // total now refers to the current book	
+			}
+		}
+
+	} else {
+		std::cerr << "No data?!\n";
+		return -1;
+	}
+
+	return 0;
+}
+```
+
+### Exercise 2.42
+
+Write your own version of the Sales\_data.h header and use it to rewrite the exercise from § 2.6.2 (p. 76).
+
+[Sales\_data.h](Sales_data.h)
+
+[2.42.1 code](e2_42_1.cpp)
+
+[2.42.2 code](e2_42_2.cpp)
+
+[2.42.3 code](e2_42_3.cpp)
