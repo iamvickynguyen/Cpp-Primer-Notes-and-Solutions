@@ -57,3 +57,67 @@ string s7 = "hello" + ", " + s2; // error: can't add string literals
 ### Exercise 3.2
 
 Write a program to read the standard input a line at a time. Modify your program to read a word at a time.
+
+```c
+#include <iostream>
+#include <string>
+
+using std::cin;
+using std::cout;
+using std::string;
+
+// read line by line
+int main() {
+	string line;
+	while (getline(cin, line)) cout << line << '\n'; 
+	return 0;
+}
+```
+
+```c
+// read word by word
+int main() {
+	string word;
+	while (cin >> word) cout << word << '\n'; 
+	return 0;
+}
+```
+
+### Exercise 3.3
+
+Explain how whitespace characters are handled in the string input operator and in the getline function.
+
+> `getline` ignores whitespaces, it uses newline characters (`\n`) as separators. `getline(a, b, delim)` uses `delim` as separators. `>>` uses whitespaces as separators.
+
+### Exercise 3.5
+
+Write a program to read strings from the standard input, concatenating what is read into one large string. Print the concatenated string. Next, change the program to separate adjacent input strings by a space.
+
+```c
+#include <iostream>
+#include <string>
+
+using std::cin;
+using std::cout;
+using std::string;
+
+int main() {
+	string result = "", s;
+	while (getline(cin, s)) {
+		result.append(s);
+	}
+
+	cout << result << '\n';
+	return 0;
+}
+```
+
+```c
+int main() {
+	string result = "", s;
+	cin >> result;
+	while (cin >> s) result.append(" " + s);
+	cout << result << '\n';
+	return 0;
+}
+```
