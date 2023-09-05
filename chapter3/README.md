@@ -52,6 +52,9 @@ string s6 = s1 + ", " + "world"; // ok: each + has a string operand
 string s7 = "hello" + ", " + s2; // error: can't add string literals
 ```
 
+- Use range `for` (`:`) to loop through each character (i.e., `for (declaration : expression) statement;`)
+- Can also use subscript (`[]`) to access characters (i.e,, `string s("Hello"); std::cout << s[0];`)
+
 ## Exercises
 
 ### Exercise 3.2
@@ -121,3 +124,76 @@ int main() {
 	return 0;
 }
 ```
+
+### Exercise 3.6
+
+Use a range for to change all the characters in a string to X.
+
+```c
+std::string s = "abcd efg123";
+for (auto &x: s) x = 'X';
+```
+
+### Exercise 3.7
+
+What would happen if you define the loop control variable in the previous exercise as type char? Predict the results and then change your program to use a char to see if you were right.
+
+> The string would remain the same as with `char`, we just use a copy of each character in the string. To mutate each character in the string, we must use a reference (`char&`)
+
+```c
+std::string s = "abcd efg123";
+for (char x: s) x = 'X';
+```
+
+### Exercise 3.8
+
+Rewrite the program in the first exercise, first using a while and again using a traditional for loop. Which of the three approaches do you prefer and why?
+
+```c
+// while loop
+decltype(s.size()) i = 0;
+while (i < s.size()) s[i++] = 'X';
+```
+
+```c
+// for loop
+for (unsigned i = 0; i < s.size(); ++i) s[i] = 'X';
+```
+
+> I prefer the range for, first approach, because I don't need to create another variable for index (`i`) and I don't need a condition for checking the bound. The range for is the shortest and most direct way to access and mutate each character in the string.
+
+### Exercise 3.9
+
+What does the following program do? Is it valid? If not, why not?
+
+string s;
+
+cout << s[0] << endl;
+
+> The code tries to print the first element in `s`. This is invalid because s is empty so `s[0]` is out of bound.
+
+### Exercise 3.10
+
+Write a program that reads a string of characters including punctuation and writes what was read but with the punctuation removed.
+
+```c
+int main() {
+	string result, input;
+	getline(cin, input);
+	for (auto &c: input) {
+		if (!ispunct(c)) result.push_back(c);
+	}
+	cout << result << '\n';
+	return 0;
+}
+```
+
+### Exercise 3.11
+
+Is the following range for legal? If so, what is the type of c?
+
+const string s = "Keep out!";
+
+for (auto \&c : s) { /* ...  \*/ }
+
+> Depending on the loop body. If it tries to mutate `c` (for example, `c = 'C';`) then illegal. Otherwise, legal. `c` is `const char&`.
