@@ -55,6 +55,29 @@ string s7 = "hello" + ", " + s2; // error: can't add string literals
 - Use range `for` (`:`) to loop through each character (i.e., `for (declaration : expression) statement;`)
 - Can also use subscript (`[]`) to access characters (i.e,, `string s("Hello"); std::cout << s[0];`)
 
+## 3.3. Library `vector` Type
+
+- `vector` is somtimes called `container`
+- *Templates* are instructions to the compiler for generating classes or functions
+
+> "Templates are cookie cutters, not cookies themselves." - Michael D. Adams, Professor at University of Victoria
+
+- *Instantiation*: create classes or functions from templates
+- `vector` is a template, not a type. Types generated from vector must include the element type (i.e., `vector<int>`)
+
+### 3.3.1. Defining and Initializing `vectors`
+
+- List initializing a `vector`:
+
+Examples
+
+```c
+vector<string> articles = {"a", "an", "the"};
+vector<string> v1{"a", "an", "the"};
+```
+
+- To use `size_type`, we must name the type (i.e., `vector<int>::size_type`)
+
 ## Exercises
 
 ### Exercise 3.2
@@ -197,3 +220,64 @@ const string s = "Keep out!";
 for (auto \&c : s) { /* ...  \*/ }
 
 > Depending on the loop body. If it tries to mutate `c` (for example, `c = 'C';`) then illegal. Otherwise, legal. `c` is `const char&`.
+
+### Exercise 3.12
+
+Which, if any, of the following vector definitions are in error? For those that are legal, explain what the definition does. For those that are not legal, explain why they are illegal.
+
+```c
+(a) vector<vector<int>> ivec; // legal, create an empty 2d vector of int
+(b) vector<string> svec = ivec; // illegal, different type
+(c) vector<string> svec(10, "null"); // legal, create a vector of string with 10 items and their values are "null"
+```
+
+### Exercise 3.13
+
+How many elements are there in each of the following vectors? What are the values of the elements?
+
+```c
+(a) vector<int> v1; // 0 element
+(b) vector<int> v2(10); // 10 elements, value is 0
+(c) vector<int> v3(10, 42); // 10 elements, value is 42
+(d) vector<int> v4{10}; // 1 element, value is 10
+(e) vector<int> v5{10, 42}; // 2 elements: 10, 42
+(f) vector<string> v6{10}; // 10 elements, value is "" 
+(g) vector<string> v7{10, "hi"}; // 10 elements, value is "hi" 
+```
+
+### Exercise 3.17
+
+Read a sequence of words from cin and store the values a vector. After you’ve read all the words, process the vector and change each word to uppercase. Print the transformed elements, eight words to a line.
+
+[Code](e3_17.cpp)
+
+### Exercise 3.18
+
+Is the following program legal? If not, how might you fix it?
+
+vector<int> ivec;
+
+ivec[0] = 42;
+
+> Illegal because `ivec` is empty. Fix: `vector<int> ivec{42};` 
+
+### Exercise 3.19
+
+List three ways to define a vector and give it ten elements, each with the value 42. Indicate whether there is a preferred way to do so and why.
+
+```c
+vector<int> v1(10, 42);
+vector<int> v2{42,42,42,42,42,42,42,42,42,42};
+vector<int> v3;
+for (int i = 0; i < 10; ++i) v3.push_back(42);
+```
+
+> I prefer the first one `v1`
+
+### Exercise 3.20
+
+Read a set of integers into a vector. Print the sum of each pair of adjacent elements. Change your program so that it prints the sum of the first and last elements, followed by the sum of the second and second-tolast, and so on.
+
+[Code part 1](e3_20_1.cpp)
+
+[Code part 2](e3_20_2.cpp)
