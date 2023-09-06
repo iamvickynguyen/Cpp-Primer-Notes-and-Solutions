@@ -78,6 +78,44 @@ vector<string> v1{"a", "an", "the"};
 
 - To use `size_type`, we must name the type (i.e., `vector<int>::size_type`)
 
+## 3.4. Introducing Iterators
+
+- All of the library containers have iterators, but only a few of them support the subscript operator
+- The iterator returned by `end()` is off-the-end iterator
+- We have `iterator` and `const_iterator`
+
+Examples
+
+```c
+vector<int>::iterator it; // it can read and write vector<int> elements
+string::iterator it2; // it2 can read and write characters in a string
+vector<int>::const_iterator it3; // it3 can read but not write elements
+string::const_iterator it4; // it4 can read but not write characters
+```
+
+```c
+vector<int> v;
+const vector<int> cv;
+auto it1 = v.begin(); // it1 has type vector<int>::iterator
+auto it2 = cv.begin(); // it2 has type vector<int>::const_iterator
+```
+
+```c
+auto it3 = v.cbegin(); // it3 has type vector<int>::const_iterator
+```
+
+- Parentheses are important in combining dereference and member access
+
+Example:
+
+```c
+(*it).empty() // dereferences it and calls the member empty on the resulting object
+*it.empty() // error: attempts to fetch the member named empty from it
+            // but it is an iterator and has no member named empty
+```
+
+- `it->mem` is same as `(*it).mem`
+
 ## Exercises
 
 ### Exercise 3.2
@@ -281,3 +319,34 @@ Read a set of integers into a vector. Print the sum of each pair of adjacent ele
 [Code part 1](e3_20_1.cpp)
 
 [Code part 2](e3_20_2.cpp)
+
+### Exercise 3.22
+
+Revise the loop that printed the first paragraph in text to instead change the elements in text that correspond to the first paragraph to all uppercase. After you’ve updated text, print its contents.
+
+[Code](e3_22.cpp)
+
+### Exercise 3.23
+
+Write a program to create a vector with ten int elements. Using an iterator, assign each element a value that is twice its current value. Test your program by printing the vector.
+
+[Code](e3_23.cpp)
+
+### Exercise 3.25
+
+Rewrite the grade clustering program from § 3.3.3 (p. 104) using iterators instead of subscripts.
+
+```c
+vector<unsigned> scores(11, 0);
+unsigned grade;
+while (cin >> grade) {
+	if (grade <= 100)
+		++*(scores.begin() + grade/10);
+}
+```
+
+### Exercise 3.26
+
+In the binary search program on page 112, why did we write mid = beg + (end - beg) / 2; instead of mid = (beg + end)/2;?
+
+> There is no `+` operator for 2 iterators
