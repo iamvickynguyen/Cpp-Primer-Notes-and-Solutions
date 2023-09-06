@@ -116,6 +116,69 @@ Example:
 
 - `it->mem` is same as `(*it).mem`
 
+## 3.5. Arrays
+
+- Array is like `vector` but fixed size
+
+### 3.5.1. Defining and Initializing Built-in Arrays
+
+- Array is a compound type, form `a[d]`, where `a` is name, `d` is dimension
+- Dimension must be known at compile time
+
+Examples:
+
+```c
+unsigned cnt = 42; // not a constant expression
+constexpr unsigned sz = 42; // constant expression
+                            // constexpr see § 2.4.4 (p. 66)
+int arr[10]; // array of ten ints
+int *parr[sz]; // array of 42 pointers to int
+string bad[cnt]; // error: cnt is not a constant expression
+string strs[get_size()]; // ok if get_size is constexpr, error otherwise
+```
+
+- We can list initialize an array, then we are allowed to omit the dimension
+
+Examples:
+
+```c
+const unsigned sz = 3;
+int ia1[sz] = {0,1,2}; // array of three ints with values 0, 1, 2
+int a2[] = {0, 1, 2}; // an array of dimension 3
+int a3[5] = {0, 1, 2}; // equivalent to a3[] = {0, 1, 2, 0, 0}
+string a4[3] = {"hi", "bye"}; // same as a4[] = {"hi", "bye", ""}
+int a5[2] = {0,1,2}; // error: too many initializers
+```
+
+- Character arrays are special
+
+Examples:
+
+```c
+char a1[] = {'C', '+', '+'}; // list initialization, no null
+char a2[] = {'C', '+', '+', '\0'}; // list initialization, explicit null
+char a3[] = "C++"; // null terminator added automatically
+const char a4[6] = "Daniel"; // error: no space for the null!
+```
+
+- For standard features, we cannot copy or do assignment with arrays
+
+Examples:
+
+```c
+int a[] = {0, 1, 2}; // array of three ints
+int a2[] = a; // error: cannot initialize one array with another
+a2 = a; // error: cannot assign one array to another
+```
+
+- To read complicated array declarations, start with the name, then read from inside out
+
+Example:
+
+```c
+int *(&arry)[10] = ptrs; // arry is a reference to an array of ten pointers
+```
+
 ## Exercises
 
 ### Exercise 3.2
@@ -350,3 +413,41 @@ while (cin >> grade) {
 In the binary search program on page 112, why did we write mid = beg + (end - beg) / 2; instead of mid = (beg + end)/2;?
 
 > There is no `+` operator for 2 iterators
+
+### Exercise 3.27
+
+Assuming txt\_size is a function that takes no arguments and returns an int value, which of the following definitions are illegal? Explain why. unsigned buf\_size = 1024;
+
+```c
+(a) int ia[buf_size]; // illegal, buf_size is not constexpr
+(b) int ia[4 * 7 - 14]; // legal
+(c) int ia[txt_size()]; // illegal, return value is not constexpr 
+(d) char st[11] = "fundamental"; // illegal, no space for null character
+```
+
+### Exercise 3.28
+
+What are the values in the following arrays?
+
+string sa[10];
+
+int ia[10];
+
+int main() {
+
+ string sa2[10]; int ia2[10];
+
+}
+
+```
+sa: ""
+ia: 0
+sa2: ""
+ia2: undefined
+```
+
+### Exercise 3.29
+
+List some of the drawbacks of using an array instead of a vector.
+
+> Size must be known at compile time, no APIs like vector
