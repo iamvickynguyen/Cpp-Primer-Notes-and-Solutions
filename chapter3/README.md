@@ -451,3 +451,27 @@ ia2: undefined
 List some of the drawbacks of using an array instead of a vector.
 
 > Size must be known at compile time, no APIs like vector
+
+### Exercise 3.30
+
+Identify the indexing errors in the following code
+
+```c
+constexpr size_t array_size = 10;
+int ia[array_size];
+for (size_t ix = 1; ix <= array_size; ++ix) // error, fix: for (size_t ix = 0 ix < array_size; ++ix)
+    ia[ix] = ix;
+```
+
+### Exercise 3.32
+
+Copy the array you defined in the previous exercise into another array. Rewrite your program to use vectors.
+
+[Code](e3_32.cpp)
+
+### Exercise 3.33
+
+What would happen if we did not initialize the scores array in the program on page 116?
+
+> Values are undefined
+
