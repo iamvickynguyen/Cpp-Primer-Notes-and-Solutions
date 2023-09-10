@@ -300,6 +300,42 @@ char *str = s; // error: can't initialize a char* from a string
 const char *str = s.c_str(); // ok
 ```
 
+## 3.6. Multidimensional Arrays
+
+- Nested braces are optional
+
+Example:
+
+```c
+int ia[3][4] = { // three elements; each element is an array of size 4
+ {0, 1, 2, 3}, // initializers for the row indexed by 0
+ {4, 5, 6, 7}, // initializers for the row indexed by 1
+ {8, 9, 10, 11} // initializers for the row indexed by 2
+};
+
+// equivalent initialization without the optional nested braces for each row
+int ia2[3][4] = {0,1,2,3,4,5,6,7,8,9,10,11};
+```
+
+- Multidimensional array is an array of arrays, the pointer to the array will points to the first inner array
+
+Example:
+
+```c
+int ia[3][4]; // array of size 3; each element is an array of ints of size 4
+int (*p)[4] = ia; // p points to an array of four ints
+p = &ia[2]; // p now points to the last element in ia
+```
+
+- Parentheses in the above code is important
+
+Example:
+
+```c
+int *ip[4]; // array of pointers to int
+int (*ip)[4]; // pointer to an array of four ints
+```
+
 ## Exercises
 
 ### Exercise 3.2
@@ -669,3 +705,11 @@ vector<int> vec = {1, 2, 3};
 int arr[3];
 for (int i = 0; i < 3; ++i) arr[i] = vec[i];
 ```
+
+### Exercise 3.43
+
+Write three different versions of a program to print the elements of ia. One version should use a range for to manage the iteration, the other two should use an ordinary for loop in one case using
+subscripts and in the other using pointers. In all three programs write all th 
+types directly. That is, do not use a type alias, auto, or decltype to simplify the code.
+
+[Code](e3_43.cpp)
