@@ -179,6 +179,127 @@ Example:
 int *(&arry)[10] = ptrs; // arry is a reference to an array of ten pointers
 ```
 
+### 3.5.3. Pointers and Arrays
+
+- When we use an array, the compiler ordinarily converts the array to a pointer. Specifically, it will substitute a pointer to the first element
+
+Example:
+
+```c
+string nums[] = {"one", "two", "three"}; // array of strings
+string *p = &nums[0]; // p points to the first element in nums
+string *p2 = nums; // equivalent to p2 = &nums[0]
+```
+
+- `auto` deduced type is a pointer, not an array
+
+Example:
+
+```c
+int ia[] = {0,1,2,3,4,5,6,7,8,9}; // ia is an array of ten ints
+auto ia2(ia); // ia2 is an int* that points to the first element in ia
+ia2 = 42; // error: ia2 is a pointer, and we can't assign an int to a pointer
+```
+
+- `decltype` returns an array
+
+Example:
+
+```c
+// ia3 is an array of ten ints
+decltype(ia) ia3 = {0,1,2,3,4,5,6,7,8,9};
+ia3 = p; // error: can't assign an int* to an array
+ia3[4] = i; // ok: assigns the value of i to an element in ia3
+```
+
+- Pointers have same operators as iterators
+
+Example:
+
+```c
+int arr[] = {0,1,2,3,4,5,6,7,8,9};
+int *p = arr; // p points to the first element in arr
+++p; // p points to arr[1]
+```
+
+- Can use standard library to get begin and end pointers
+
+Example:
+
+```c
+int ia[] = {0,1,2,3,4,5,6,7,8,9}; // ia is an array of ten ints
+int *beg = begin(ia); // pointer to the first element in ia
+int *last = end(ia); // pointer one past the last element in ia
+```
+
+- Pointer arithmetic: increment, comparisons, addition of an integral value, subtraction of 2 pointers
+
+Examples:
+
+```c
+constexpr size_t sz = 5;
+int arr[sz] = {1,2,3,4,5};
+int *ip = arr; // equivalent to int *ip = &arr[0]
+int *ip2 = ip + 4; // ip2 points to arr[4], the last element in arr
+```
+
+```c
+// ok: arr is converted to a pointer to its first element; p points one past the end of arr
+int *p = arr + sz; // use caution -- do not dereference!
+int *p2 = arr + 10; // error: arr has only 5 elements; p2 has undefined value
+```
+
+```c
+auto n = end(arr) - begin(arr); // n is 5, the number of elements in arr
+```
+
+```c
+int *b = arr, *e = arr + sz;
+while (b < e) {
+    // use *b
+    ++b;
+}
+```
+
+- Can use subscript operator on any pointer, as long as it points to an element
+- Unlike subscripts for vector and string, the index of the built-in subscript operator is not an unsigned type.
+
+Example:
+
+```c
+int ia[] = {0,2,4,6,8}; // array with 5 elements of type int
+int *p = &ia[2]; // p points to the element indexed by 2
+int j = p[1]; // p[1] is equivalent to *(p + 1),
+              // p[1] is the same element as ia[3]
+int k = p[-2]; // p[-2] is the same element as ia[0]
+```
+
+### 3.5.4. C-Style Character Strings
+
+- C++ supports C-style strings, but they should be avoided because C-style strings are rich source of bugs and are the root cause of many security problems
+- Use standard string library rather than C-style strings
+- C-style strings are not a type, but a convention of representing and using character strings
+- Strings are character arrays and are null terminated
+
+Example:
+
+```c
+char ca[] = {'C', '+', '+'}; // not null terminated
+cout << strlen(ca) << endl; // disaster: ca isn't null terminated, result is undefined
+```
+
+### 3.5.5. Interfacing to Older Code
+
+- Initialize a character pointer from a string with `c_str`
+
+Example:
+
+```c
+string s("Hello World"); // s holds Hello World
+char *str = s; // error: can't initialize a char* from a string
+const char *str = s.c_str(); // ok
+```
+
 ## Exercises
 
 ### Exercise 3.2
@@ -475,3 +596,76 @@ What would happen if we did not initialize the scores array in the program on pa
 
 > Values are undefined
 
+### Exercise 3.34
+
+Given that p1 and p2 point to elements in the same array, what does the following code do? Are there values of p1 or p2 that make this code illegal?
+
+p1 += p2 - p1;
+
+> Legal, this code increment the pointer p1 to the offset (p2 - p1). In the end, p1 and p2 point to the same element
+
+### Exercise 3.35
+
+Using pointers, write a program to set the elements in an array to zero.
+
+```c
+int arr[] = {1, 2, 3, 4, 5};
+for (int *p = arr; p != arr + 5; ++p) *p = 0;
+```
+
+### Exercise 3.36
+
+Write a program to compare two arrays for equality. Write a similar program to compare two vectors.
+
+[Code](e3_36.cpp)
+
+### Exercise 3.37
+
+What does the following program do?
+
+```c
+const char ca[] = {'h', 'e', 'l', 'l', 'o'};
+const char *cp = ca;
+while (*cp) {
+    cout << *cp << endl; ++cp;
+}
+```
+
+> It tries to print each character in `ca`. However, since there is no null terminated character at the end, the result will be undefined. Most of the time, the loop won't terminate and the program will print garbage 
+
+### Exercise 3.38
+
+In this section, we noted that it was not only illegal but meaningless to try to add two pointers. Why would adding two pointers be meaningless?
+
+> Pointers contain addresses. Adding 2 pointers makes no sense. [See stackoverflow](https://stackoverflow.com/a/25667730) 
+
+### Exercise 3.39
+
+Write a program to compare two strings. Now write a program to compare the values of two C-style character strings.
+
+[Code](e3_39.cpp)
+
+### Exercise 3.40
+
+Write a program to define two character arrays initialized from string literals. Now define a third character array to hold the concatenation of the two arrays. Use strcpy and strcat to copy the two arrays into the third.
+
+[Code](e3_40.cpp)
+
+### Exercise 3.41
+
+Write a program to initialize a vector from an array of ints.
+
+```c
+int arr[] = {1, 2, 3};
+vector<int> vec(begin(arr), end(arr));
+```
+
+### Exercise 3.42
+
+Write a program to copy a vector of ints into an array of ints.
+
+```c
+vector<int> vec = {1, 2, 3};
+int arr[3];
+for (int i = 0; i < 3; ++i) arr[i] = vec[i];
+```
