@@ -43,6 +43,66 @@ int i = 0;
 cout << i << " " << ++i << endl; // undefined
 ```
 
+## 4.2. Arithmetic Operators
+
+- Becareful with overflow and undefined results (i.e, division by 0)
+
+## 4.3. Logical and Relational Operators
+
+- *Short-circuit evaluation*: the right operand is evaluated iff the left operand does not determine the result (for `&&` and `||`)
+
+## 4.4. Assignment Operators
+
+- The left-hand operand of an assignment operator must be a modifiable *lvalue*
+
+Examples:
+
+```c
+int i = 0, j = 0, k = 0; // initializations, not assignment
+const int ci = i; // initialization, not assignment
+```
+
+```c
+1024 = k; // error: literals are rvalues
+i + j = k; // error: arithmetic expressions are rvalues
+ci = k; // error: ci is a const (nonmodifiable) lvalue
+```
+
+```c
+k = 0; // result: type int, value 0
+k = 3.14159; // result: type int, value 3
+```
+
+- Assignment is right associative
+
+Example:
+
+```c
+int ival, jval;
+ival = jval = 0; // ok: each assigned 0
+                 // jval = 0, then ival = jval
+```
+
+- Each object in a multiple assignment must have the same type as its right-hand neighbor or a type to which that neighbor can be converted
+
+Example:
+
+```c
+int ival, *pval; // ival is an int; pval is a pointer to int
+ival = pval = 0; // error: cannot assign the value of a pointer to an int
+```
+
+- Assignment has low precedence, so parentheses are needed
+
+Example:
+
+```c
+int i;
+while ((i = get_value()) != 42) {
+    // do something ...
+}
+```
+
 ## Exercises
 
 ### Exercise 4.3
@@ -50,3 +110,96 @@ cout << i << " " << ++i << endl; // undefined
 Order of evaluation for most of the binary operators is left undefined to give the compiler opportunities for optimization. This strategy presents a trade-off between efficient code generation and potential pitfalls in the use of the language by the programmer. Do you consider that an acceptable trade-off? Why or why not?
 
 > Yes, but programmers have to be careful. Performance in C++ is important, so compiler's features are good. However, we also don't want bugs, so it's best to avoid undefined behaviours. For example, `cout << i << ++i` should not appear in the code.
+
+### Exercise 4.6
+
+Write an expression to determine whether an int value is even or odd.
+
+```c
+int x = 3;
+cout << ((x % 2 == 0) ? "Even" : Odd) << '\n';
+```
+
+### Exercise 4.7
+
+What does overflow mean? Show three expressions that will overflow.
+
+> Overflow means the value is outside the range of that the type can represent
+
+```c
+int a = INT_MAX; ++a;
+short b = SHRT_MIN; --b;
+char c = 300;
+```
+
+### Exercise 4.9
+
+Explain the behavior of the condition in the following if:
+
+```c
+const char *cp = "Hello World";
+if (cp && *cp)
+```
+
+> It checks if `cp` is not a nullptr and the content of `cp` is not empty. Result of the expression is true  
+
+### Exercise 4.10
+
+Write the condition for a while loop that would read ints from the standard input and stop when the value read is equal to 42.
+
+```c
+int x;
+while (cin >> x && x != 42)
+```
+
+### Exercise 4.11
+
+Write an expression that tests four values, a, b, c, and d, and ensures that a is greater than b, which is greater than c, which is greater than d.
+
+```c
+a> b && b > c && c > d
+```
+
+### Exercise 4.12
+
+Assuming i, j, and k are all ints, explain what i != j < k means.
+
+> It means `i != (j < k)`
+
+### Exercise 4.13
+
+What are the values of i and d after each assignment?
+
+```c
+int i; double d;
+(a) d = i = 3.5; // i = 3, d = 3.0
+(b) i = d = 3.5; // d = 3.5, i = 3
+```
+
+### Exercise 4.15
+
+The following assignment is illegal. Why? How would you correct it?
+
+```c
+double dval; int ival; int *pi;
+dval = ival = pi = 0;
+```
+
+> Illegal because `pi` is a pointer to int, cannot assign `int*` to `int`
+
+```c
+// Fix
+dval = ival = 0;
+pi = 0;
+```
+
+### Exercise 4.16
+
+Although the following are legal, they probably do not behave as the programmer expects. Why? Rewrite the expressions as you think they should be.
+
+```c
+(a) if (p = getPtr() != 0) // this is same as p = (getPtr() != 0)
+                           // fix: if ((p = getPtr()) != 0)
+(b) if (i = 1024) // same as if (true)
+                  // fix: if (i == 1024)
+```
