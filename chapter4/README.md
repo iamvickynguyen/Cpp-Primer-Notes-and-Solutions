@@ -103,6 +103,26 @@ while ((i = get_value()) != 42) {
 }
 ```
 
+## 4.5. Increment and Decrement Operators
+
+- `cout << *iter++ << endl;` is less-error-prine than the more verbose `cout << *iter << endl; ++iter;`
+- Operands can be evaluated in any order
+
+Example:
+
+```c
+// the behavior of the following loop is undefined!
+while (beg != s.end() && !isspace(*beg))
+    *beg = toupper(*beg++); // error: this assignment is undefined
+
+/*
+The compiler might evaluate this expression as either:
+*beg = toupper(*beg); // execution if left-hand side is evaluated first
+*(beg + 1) = toupper(*beg); // execution if right-hand side is evaluated
+first
+*/
+```
+
 ## Exercises
 
 ### Exercise 4.3
@@ -202,4 +222,21 @@ Although the following are legal, they probably do not behave as the programmer 
                            // fix: if ((p = getPtr()) != 0)
 (b) if (i = 1024) // same as if (true)
                   // fix: if (i == 1024)
+```
+
+### Exercise 4.17
+
+Explain the difference between prefix and postfix increment.
+
+> Prefix: increment first, then return the incremented value. Postfix: return the original value, then increment it. Prefix is more efficient because the compiler increment the value of that object, whereas the compiler has to create a temporary object for postfix.
+
+### Exercise 4.19
+
+Given that ptr points to an int, that vec is a vector\<int>, and that ival is an int, explain the behavior of each of these expressions. Which, if any, are likely to be incorrect? Why? How might each be corrected?
+
+```c
+(a) ptr != 0 && *ptr++ // check if ptr isn't nullptr and check ptr value
+(b) ival++ && ival // check ival and ival + 1 if equal 0 
+(c) vec[ival++] <= vec[ival] // incorrect, undefined behaviour
+                             // fix: vec[ival] <= vec[ival+1];
 ```
