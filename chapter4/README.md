@@ -123,6 +123,41 @@ first
 */
 ```
 
+## 4.6. The Member Access Operators
+
+- Access member with dot (`.`) and arrow (`->`)
+- `ptr->mem` is same as `(*ptr).mem`
+
+## 4.7. The Conditional Operator
+
+- `cond ? expr1 : expr2;`
+- The conditional operator has fairly low precedence. Thus, need parentheses
+
+Examples:
+
+```c
+cout << ((grade < 60) ? "fail" : "pass"); // prints pass or fail
+cout << (grade < 60) ? "fail" : "pass"; // prints 1 or 0!
+cout << grade < 60 ? "fail" : "pass"; // error: compares cout to 60
+```
+
+## 4.8. The Bitwise Operators
+
+- Because there are no guarantees for how the sign bit is handled, unsigned types with the bitwise operators is recommended
+
+## 4.9. The sizeof Operator
+
+- The `sizeof` operator returns the size, in bytes
+- `sizeof` doesn't evaluate its operand
+
+Example:
+
+```c
+sizeof(ia)/sizeof(*ia); // returns the number of elements in ia
+```
+
+## 4.10. Comma Operator
+
 ## Exercises
 
 ### Exercise 4.3
@@ -240,3 +275,49 @@ Given that ptr points to an int, that vec is a vector\<int>, and that ival is an
 (c) vec[ival++] <= vec[ival] // incorrect, undefined behaviour
                              // fix: vec[ival] <= vec[ival+1];
 ```
+
+### Exercise 4.20
+
+Assuming that iter is a vector\<string>::iterator, indicate which, if any, of the following expressions are legal. Explain the behavior of the legal expressions and why those that aren’t legal are in error.
+
+```c
+(a) *iter++; // legal, deference iter then increment the value
+(b) (*iter)++; // illegal, *iter is string, cannot increment a string
+(c) *iter.empty() // illegal, same as *(iter.empty())
+(d) iter->empty(); // legal, check if value of the string is empty
+(e) ++*iter; // illegal, cannot increment a string
+(f) iter++->empty(); // legal, check if the current string is empty, then increment iter 
+```
+
+### Exercise 4.23
+
+The following expression fails to compile due to operator precedence. Using Table 4.12 (p. 166), explain why it fails. How would you fix it?
+
+```c
+string s = "word";
+string pl = s + s[s.size() - 1] == 's' ? "" : "s" ;
+```
+
+> Fails because of the operator precedence: `+` > `==` > `?:`. This is same as `string pl = ((s + s[s.size() - 1]) == 's') ? "" : "s";` 
+
+### Exercise 4.25
+
+What is the value of ~'q' << 6 on a machine with 32-bit ints and 8 bit chars, that uses Latin-1 character set in which 'q' has the bit pattern 01110001?
+
+```c
+~'q': 10001110
+~'q' << 6: 11111111111111111111111110001110 which is 4294960000 in decimal
+Since 4294960000 doesn't fit 32-bit int, the value is wrap around. The output is -7296
+```
+
+### Exercise 4.29
+
+Predict the output of the following code and explain your reasoning. Now run the program. Is the output what you expected? If not, figure out why.
+
+```c
+int x[10]; int *p = x;
+cout << sizeof(x)/sizeof(*x) << endl;
+cout << sizeof(p)/sizeof(*p) << endl;
+```
+
+> First output is 10. Second output is undefined because `sizeof(p)` (size of pointer) varies depending on the architecture and the compiler
