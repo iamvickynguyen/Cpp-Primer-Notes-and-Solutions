@@ -1,5 +1,44 @@
 # Chapter 4. Expressions
 
+<!-- vim-markdown-toc GFM -->
+
+* [4.1. Fundamentals](#41-fundamentals)
+    * [4.1.1. Basic Concepts](#411-basic-concepts)
+    * [4.1.2. Precedence and Associativity](#412-precedence-and-associativity)
+    * [4.1.3. Order of Evaluation](#413-order-of-evaluation)
+* [4.2. Arithmetic Operators](#42-arithmetic-operators)
+* [4.3. Logical and Relational Operators](#43-logical-and-relational-operators)
+* [4.4. Assignment Operators](#44-assignment-operators)
+* [4.5. Increment and Decrement Operators](#45-increment-and-decrement-operators)
+* [4.6. The Member Access Operators](#46-the-member-access-operators)
+* [4.7. The Conditional Operator](#47-the-conditional-operator)
+* [4.8. The Bitwise Operators](#48-the-bitwise-operators)
+* [4.9. The sizeof Operator](#49-the-sizeof-operator)
+* [4.10. Comma Operator](#410-comma-operator)
+* [4.11. Type Conversions](#411-type-conversions)
+* [Exercises](#exercises)
+    * [Exercise 4.3](#exercise-43)
+    * [Exercise 4.6](#exercise-46)
+    * [Exercise 4.7](#exercise-47)
+    * [Exercise 4.9](#exercise-49)
+    * [Exercise 4.10](#exercise-410)
+    * [Exercise 4.11](#exercise-411)
+    * [Exercise 4.12](#exercise-412)
+    * [Exercise 4.13](#exercise-413)
+    * [Exercise 4.15](#exercise-415)
+    * [Exercise 4.16](#exercise-416)
+    * [Exercise 4.17](#exercise-417)
+    * [Exercise 4.19](#exercise-419)
+    * [Exercise 4.20](#exercise-420)
+    * [Exercise 4.23](#exercise-423)
+    * [Exercise 4.25](#exercise-425)
+    * [Exercise 4.29](#exercise-429)
+    * [Exercise 4.35](#exercise-435)
+    * [Exercise 4.37](#exercise-437)
+    * [Exercise 4.38](#exercise-438)
+
+<!-- vim-markdown-toc -->
+
 ## 4.1. Fundamentals
 
 ### 4.1.1. Basic Concepts
