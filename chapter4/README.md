@@ -158,6 +158,33 @@ sizeof(ia)/sizeof(*ia); // returns the number of elements in ia
 
 ## 4.10. Comma Operator
 
+- The comma operator guarantees the order in which its operands are evaluated
+
+Examples:
+
+```c
+int a = 4, b = 5;
+for (int i = 0, j = 5; i < 10; ++i, --j) // do something ...
+```
+
+## 4.11. Type Conversions
+
+- Implicit conversions: conversions are carried out automatically
+- Explicit conversions: force an object to be converted to a different type
+- *Casts* are inherently dangerous constructs
+- Named cast has the form: `cast-name<type>(expression);`. *Cast-name* can be `static_cast`, `dynamic_cast`, `const_cast`, and `reinterpret_cast`
+- `static_cast`:
+    - Used for any well-defined type conversion, other than low-level `const` (i.e., `double slope = static_cast<double>(j) / i;`)
+    - Used to convert larger arithmetic type to a smaller one
+    - Used for a conversion that the compiler won't generate automatically (i.e., `void* p = &d; double *dp = static_cast<double*>(p);`)
+- `const_cast`: convert `const` object to a nonconst object
+- `reinterpret_cast`:
+    - Performs a low-level reinterpretation of the bit patterns of its operands (i.e., `int *ip; char *pc = reinterpret_cast<char*>(ip);`)
+    - It is inherently machine dependent
+- Old-style cast:
+    - Same as `static_cast` or `const_cast`. If neither is legal, then it performs same as `reinterpret_cast`
+    - Example: `char *pc = (char*) ip; // ip is a pointer to int`
+
 ## Exercises
 
 ### Exercise 4.3
@@ -321,3 +348,40 @@ cout << sizeof(p)/sizeof(*p) << endl;
 ```
 
 > First output is 10. Second output is undefined because `sizeof(p)` (size of pointer) varies depending on the architecture and the compiler
+
+### Exercise 4.35
+
+Given the following definitions,
+
+char cval; int ival; unsigned int ui; float fval; double dval;
+
+identify the implicit type conversions, if any, taking place:
+
+```c
+(a) cval = 'a' + 3; 'a' is promoted to int, then ('a' + 3) is converted to char
+(b) fval = ui - ival * 1.0; // ival is converted to double, then that double is convert (truncated) to float
+(c) dval = ui * fval; // ui is promoted to float, then the result is converted to double
+(d) cval = ival + fval + dval; // ival is converted to float, then that float and fval are converted to double, then the result double is converted (truncated) to char
+```
+
+### Exercise 4.37
+
+Rewrite each of the following old-style casts to use a named cast:
+
+```c
+int i; double d; const string *ps; char *pc; void *pv;
+(a) pv = (void*)ps; // pv = static_cast<void*>(const_cast<string*>(ps));
+(b) i = int(*pc); // i = static_cast<int>(*pc);
+(c) pv = &d; // pv = static_cast<void*>(&d);
+(d) pc = (char*) pv; // pc = static_cast<char*>(pv);
+```
+
+### Exercise 4.38
+
+Explain the following expression:
+
+```c
+double slope = static_cast<double>(j/i);
+```
+
+> Integer division for `j/i` then cast the result to `double` and store to `slope`
