@@ -1,6 +1,28 @@
 # Chapter 5. Statements
 
 - Good idea to use tools to automatically indent source code
+- *Jump* statements have one of the 4 keywords: `break`, `continue`, `goto`, `return`
+- Best practice is to avoid using `goto` because it makes the program hard to understand and hard to modify
+- Exceptions are run time anomalies. Exception handling involves:
+    - `throw` expressions: detect something it can't handle. We say a `throw` *raises* an exception
+    - `try` blocks: deal with an exception. It has >= 1 `catch` clauses
+        - `catch` clauses are aka *exception handlers*
+    - *exception classes*: used to pass information about what happened between a `throw` and a `catch`
+- Writing exception safe code is hard. Some programs use exceptions simply to terminate. However, programs that handle exceptions and continue processing must ensure objects are valid, resources don't leak, and program is restored to an appropriate state
+
+<!-- vim-markdown-toc GFM -->
+
+* [Exercises](#exercises)
+    * [Exercise 5.4](#exercise-54)
+    * [Exercise 5.8](#exercise-58)
+    * [Exercise 5.13](#exercise-513)
+    * [Exercise 5.15](#exercise-515)
+    * [Exercise 5.19](#exercise-519)
+    * [Exercise 5.23](#exercise-523)
+    * [Exercise 5.24](#exercise-524)
+    * [Exercise 5.25](#exercise-525)
+
+<!-- vim-markdown-toc -->
 
 ## Exercises
 
@@ -156,3 +178,78 @@ switch(swt) {
         break;
 }
 ```
+
+### Exercise 5.15
+
+Explain each of the following loops. Correct any problems you detect.
+
+```c
+(a) for (int ix = 0; ix != sz; ++ix) { /* ... */ }
+if (ix != sz)
+// . . .
+```
+
+> It tries to loop from `ix = 0` to `ix != sz`. However, `ix` is not defined outside of for loop
+
+```c
+// Fix:
+int ix;
+for (ix = 0; ix != sz; ++ix) {/* ... */}
+if (ix != sz)
+// ...
+```
+
+```c
+(b) int ix;
+for (ix != sz; ++ix) { /* ... */ }
+```
+
+> The loop tries to run from `ix` to `sz`. Error, missing statement in for loop
+
+```c
+// Fix:
+int ix;
+for (; ix < sz; ++ix) { /* ... */ }
+```
+
+```c
+(c) for (int ix = 0; ix != sz; ++ix, ++ sz) { /* ... */ }
+```
+
+> It tries to loop from `ix = 0` until `ix != sz`. However, this is an infinite loop as `ix` and `sz` keep incrementing by 1
+
+```c
+// Fix:
+for (int ix = 0; ix != sz; ++ix) {/* ... */}
+```
+
+### Exercise 5.19
+
+Write a program that uses a do while loop to repetitively request two strings from the user and report which string is less than the other.
+
+```c
+string s1, s2;
+cin >> s1 >> s2;
+do {
+    if (s1 < s2) cout << s1 << " is less than " << s2 << '\n';
+    else cout << s2 << " is less than or equal to " << s1 << '\n';
+} while (cin >> s1 >> s2);
+```
+
+### Exercise 5.23
+
+Write a program that reads two integers from the standard input and prints the result of dividing the first number by the second.
+
+[Code](e5_23.cpp)
+
+### Exercise 5.24
+
+Revise your program to throw an exception if the second number is zero. Test your program with a zero input to see what happens on your system if you don’t catch an exception.
+
+[Code](e5_24.cpp)
+
+### Exercise 5.25
+
+Revise your program from the previous exercise to use a try block to catch the exception. The catch clause should print a message to the user and ask them to supply a new number and repeat the code inside the try.
+
+[Code](e5_25.cpp)
