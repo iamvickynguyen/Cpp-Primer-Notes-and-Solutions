@@ -9,25 +9,27 @@
 Explain each of the following examples, and correct any problems you detect.
 
 ```c
-(a) while (string::iterator iter != s.end()) { /* ... */ } // illegal declaration
+(a) while (string::iterator iter != s.end()) { /* ... */ } 
+```
 
-/*
-Fix:
+```c
+// Error: illegal declaration
+// Fix:
 string::iterator iter = s.begin();
 while (iter != s.end()) {/* ... */ }
-*/
 ```
 
 ```c
 (b) while (bool status = find(word)) { /* . . . */ }
-if (!status) { /* ... */ } // status is not defined
+if (!status) { /* ... */ }
+```
 
-/*
-Fix:
+```c
+// Error: status is not defined
+// Fix:
 bool status;
 while (status = find(word)) {/* ... */}
 if (!status) {/* ... */}
-*/
 ```
 
 ### Exercise 5.8
@@ -40,13 +42,15 @@ What is a “dangling else”? How are else clauses resolved in C++?
 
 Each of the programs in the highlighted text on page 184 contains a common programming error. Identify and correct each error.
 
+```c
 (a) unsigned aCnt = 0, eCnt = 0, iouCnt = 0;
-char ch = next\_text();
+char ch = next_text();
 switch (ch) {
     case 'a': aCnt++;
     case 'e': eCnt++;
     default: iouCnt++;
 }
+```
 
 ```c
 // Error: all aCnt, eCnt, iouCnt will be incremeted
@@ -60,16 +64,18 @@ switch (ch) {
 }
 ```
 
-(b) unsigned index = some\_value();
+```c
+(b) unsigned index = some_value();
 switch (index) {
     case 1:
-        int ix = get\_value();
+        int ix = get_value();
         ivec[ ix ] = index;
         break;
     default:
         ix = ivec.size()-1;
         ivec[ ix ] = index;
 }
+```
 
 ```c
 // Error: ix in default case is not defined
@@ -87,8 +93,9 @@ switch (index) {
 }
 ```
 
+```c
 (c) unsigned evenCnt = 0, oddCnt = 0;
-int digit = get\_num() % 10;
+int digit = get_num() % 10;
 switch (digit) {
     case 1, 3, 5, 7, 9:
         oddcnt++;
@@ -97,6 +104,7 @@ switch (digit) {
         evencnt++;
         break;
 }
+```
 
 ```c
 // Error: syntax error for case statements
@@ -113,9 +121,10 @@ switch (digit) {
 }
 ```
 
+```c
 (d) unsigned ival=512, jval=1024, kval=4096;
 unsigned bufsize;
-unsigned swt = get\_bufCnt();
+unsigned swt = get_bufCnt();
 switch(swt) {
     case ival:
         bufsize = ival * sizeof(int);
@@ -127,6 +136,7 @@ switch(swt) {
         bufsize = kval * sizeof(int);
         break;
 }
+```
 
 ```c
 // Error: case label must be a constant
