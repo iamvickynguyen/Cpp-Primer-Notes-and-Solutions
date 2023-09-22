@@ -29,6 +29,34 @@ int main() {
 
 - Separate compilation lets us split programs into several files, each of which can be compiled independently
 
+## 6.2. Argument Passing
+
+- Programmers accustomed to programming in C often use pointer parameters to access objects outside a function. In C++, programmers generally use reference parameters instead
+
+### 6.2.2. Passing Arguments by Reference
+
+- Reference parameters that are not changed inside a function should be references to const
+- Can use reference paramters to return additional information
+
+Example:
+
+```c
+// returns the index of the first occurrence of c in s
+// the reference parameter occurs counts how often c occurs
+string::size_type find_char(const string &s, char c, string::size_type &occurs) {
+    auto ret = s.size(); // position of the first occurrence, if any
+    occurs = 0; // set the occurrence count parameter
+    for (decltype(ret) i = 0; i != s.size(); ++i) {
+        if (s[i] == c) {
+            if (ret == s.size())
+                ret = i; // remember the first occurrence of c
+            ++occurs; // increment the occurrence count
+        }
+    }
+    return ret; // count is returned implicitly in occurs
+}
+```
+
 ## Exercises
 
 ### Exercise 6.1
@@ -62,3 +90,17 @@ Write your own versions of the fact.cc and factMain.cc files. These files should
 [fact.cc](fact.cc)
 
 [factMain.cc](factMain.cc)
+
+### Exercise 6.10
+
+Using pointers, write a function to swap the values of two ints. Test the function by calling it and printing the swapped values.
+
+[Code](e6_10.cpp)
+
+### Exercise 6.12
+
+Rewrite the program from exercise 6.10 in § 6.2.1 (p. 210) to use references instead of pointers to swap the value of two ints. Which version do you think would be easier to use and why?
+
+[Code](e6_12.cpp)
+
+> This version is easier to use because shorter syntax
