@@ -57,6 +57,103 @@ string::size_type find_char(const string &s, char c, string::size_type &occurs) 
 }
 ```
 
+### 6.2.3. `const` Parameters and Arguments
+
+- When copying an argument to initialize a parameter, top-level `const`s are ignored
+
+Example:
+
+```c
+void fcn(const int i) { /* fcn can read but not write to i */ }
+void fcn(int i) { /* . . . */ } // error: redefines fcn(int)
+```
+
+- Use reference to `const` when possible
+
+### 6.2.4. Array Parameters
+
+- We cannot copy an array, and when we use an array, it is usually converted to a pointer
+- We cannot pass an array by value, but we can write a parameter that looks like:
+
+```c
+// despite appearances, these three declarations of print are equivalent
+// each function has a single parameter of type const int*
+void print(const int*);
+void print(const int[]); // shows the intent that the function takes an array
+void print(const int[10]); // dimension for documentation purposes (at best)
+```
+
+- We can call the above `print` function like:
+
+```c
+int i = 0, j[2] = {0, 1};
+print(&i); // ok: &i is int*
+print(j); // ok: j is converted to an int* that points to j[0]
+```
+
+- We can define a variable that is a reference to an array. This ensures that we are working with an actual array, not just a pointer, and allows us to retain the array size information
+
+Example:
+
+```c
+void print(int (&arr)[10])
+```
+
+```c
+int i = 0, j[2] = {0, 1};
+int k[10] = {0,1,2,3,4,5,6,7,8,9};
+print(&i); // error: argument is not an array of ten ints
+print(j); // error: argument is not an array of ten ints
+print(k); // ok: argument is an array of ten ints
+```
+
+- There is no multidimensional array in C++, just an array of arrays
+- The compiler ignores the first dimension, so we can do:
+
+```c
+// matrix points to the first element in an array whose elements are arrays of ten ints
+void print(int (*matrix)[10], int rowSize) { /* . . . */ }
+
+// equivalent definition
+void print(int matrix[][10], int rowSize) { /* . . . */ }
+```
+
+### 6.2.5. `main`: Handling Command-Line Options
+
+- We can pass 2 optional parameters to `main` as follows:
+
+```c
+int main(int argc, char *argv[]) {/*...*/} // C-style character strings
+int main(int argc, char **argv) {/*...*/} // argv points to a char*
+```
+
+### 6.2.6. Functions with Varying Parameters
+
+- Can use `initializer_list<T>` parameter when we don't know how many arguments to pass to a function
+- `initializer_list<T>` is same as `const vector<T>`
+
+Example:
+
+```c
+void error_msg(ErrCode e, initializer_list<string> il) {
+    cout << e.msg() << ": ";
+    for (const auto &elem : il)
+        cout << elem << " " ;
+    cout << endl;
+}
+```
+
+- *Ellipsis* parameters allow a function to accept a varying number of arguments of varying types that are common to both C and C++
+- Objects of most class types are not copied properly when passed to an ellipsis parameter
+- No type checking is done for ellipsis parameter
+
+Example:
+
+```c
+void foo(int count, ...);
+```
+
+
 ## Exercises
 
 ### Exercise 6.1
@@ -104,3 +201,32 @@ Rewrite the program from exercise 6.10 in § 6.2.1 (p. 210) to use references in
 [Code](e6_12.cpp)
 
 > This version is easier to use because shorter syntax
+
+### Exercise 6.16
+
+The following function, although legal, is less useful than it might be. Identify and correct the limitation on this function:
+
+```c
+bool is_empty(string& s) { return s.empty(); }
+```
+
+> Since the function doesn't modify the string, can add `const`; Otherwise we cannot pass a `const string` to this function. Fix: `bool is_empty(const string &s) { return s.empty(); }`
+
+### Exercise 6.18
+
+Write declarations for each of the following functions. When you write these declarations, use the name of the function to indicate what the function does.
+
+(a) A function named compare that returns a bool and has two parameters
+that are references to a class named matrix.
+
+```c
+bool compare(const Matrix &a, const Matrix &b);
+```
+
+(b) A function named change\_val that returns a vector\<int> iterator
+and takes two parameters: One is an int and the other is an iterator for a
+vector\<int>.
+
+```c
+vector<int>::iterator change_val(int x, vector<int>::iterator &iter);
+```
