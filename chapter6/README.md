@@ -230,3 +230,39 @@ vector\<int>.
 ```c
 vector<int>::iterator change_val(int x, vector<int>::iterator &iter);
 ```
+
+### Exercise 6.20
+
+When should reference parameters be references to const? What happens if we make a parameter a plain reference when it could be a reference to const?
+
+> Reference parameters should be references to const when the function doesn't change the objects' values. Compile error if we make a parameter a plain reference when it should be a reference to const
+
+### Exercise 6.21
+
+Write a function that takes an int and a pointer to an int and returns the larger of the int value or the value to which the pointer points. What type should you use for the pointer?
+
+```c
+int get_larger(const int a, const int *b) {
+    return (a > *b) ? a : (*b);
+}
+```
+
+### Exercise 6.24
+
+Explain the behavior of the following function. If there are problems in the code, explain what they are and how you might fix them.
+
+```c
+void print(const int ia[10])
+{
+    for (size_t i = 0; i != 10; ++i)
+        cout << ia[i] << endl;
+}
+```
+
+> Since the array is converted to a pointer, including the size in the array parameter is irrelevant. In this case, `const int ia[10]` is same as `const int ia[1]` and `const int ia[100]` as all of them are converted into `const int *ia`. If we want the size then we can pass a reference: `void print(const int (&ia)[10]) {/*...*/}`
+
+### Exercise 6.29
+
+When you use an initializer\_list in a range for would you ever use a reference as the loop control variable? If so, why? If not, why not?
+
+> Depending on the type, if it is a POD-type, we don't need reference because POD is cheap to copy (such as int). Otherwise, we should use reference or const reference
