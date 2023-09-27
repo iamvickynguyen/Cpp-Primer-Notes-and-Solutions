@@ -153,6 +153,101 @@ Example:
 void foo(int count, ...);
 ```
 
+## 6.3. Return Types and the `return` Statement
+
+### 6.3.1. Functions with No Return Value
+
+- A `return` with no value may be used only in a function with return type of `void`
+
+### 6.3.2. Functions That Return a Value
+
+- Never return a reference or pointer to a local object as its storage is freed after a function terminates
+
+Example:
+
+```c
+// disaster: this function returns a reference to a local object
+const string &manip() {
+    string ret;
+    // transform ret in some way
+    if (!ret.empty())
+        return ret; // WRONG: returning a reference to a local object!
+    else
+        return "Empty"; // WRONG: "Empty" is a local temporary string
+}
+```
+
+- Reference returns are lvalues. Others are rvalues
+
+Example:
+
+```c
+char &get_val(string &str, string::size_type ix) {
+    return str[ix]; // get_val assumes the given index is valid
+}
+
+int main() {
+    string s("a value");
+    cout << s << endl; // prints a value
+    get_val(s, 0) = 'A'; // changes s[0] to A
+    cout << s << endl; // prints A value
+    return 0;
+}
+```
+
+### 6.3.3. Returning a Pointer to an Array
+
+- Since we can't copy an array, a function can't return an array. However, a function can return a pointer or a reference to an array
+- Can use type alias to simplify syntax used to define functions that return pointers or references to arrays
+
+Example:
+
+```c
+typedef int arrT[10]; // arrT is a synonym for the type array of ten ints
+using arrtT = int[10]; // equivalent declaration of arrT; see § 2.5.1 (p. 68)
+arrT* func(int i); // func returns a pointer to an array of five ints
+```
+
+- Without type alias, we must remember the dimension of an array
+
+Example:
+
+```c
+int arr[10]; // arr is an array of ten ints
+int *p1[10]; // p1 is an array of ten pointers
+int (*p2)[10] = &arr; // p2 points to an array of ten ints
+```
+
+- The parameter list precedes the dimension, so the form of a function that returns a pointer to an array is `Type (*function(parameter_list))[dimension]`
+
+Example:
+
+```c
+int (*func(int i))[10];
+```
+
+- Another way to declare `func` is using a *trailing return type* (i.e., `-> parameter list`)
+
+Example:
+
+```c
+// fcn takes an int argument and returns a pointer to an array of ten ints
+auto func(int i) -> int(*)[10];
+```
+
+- A third way is using `decltype`. Note that `decltype` doesn't automatically convert an array to a pointer type (i.e., it returns an array type), so we must add `*` to indicate that the function returns a pointer
+
+Example:
+
+```c
+int odd[] = {1,3,5,7,9};
+int even[] = {0,2,4,6,8};
+
+// returns a pointer to an array of five int elements
+decltype(odd) *arrPtr(int i) {
+    return (i % 2) ? &odd : &even; // returns a pointer to the array
+}
+```
 
 ## Exercises
 
@@ -266,3 +361,70 @@ void print(const int ia[10])
 When you use an initializer\_list in a range for would you ever use a reference as the loop control variable? If so, why? If not, why not?
 
 > Depending on the type, if it is a POD-type, we don't need reference because POD is cheap to copy (such as int). Otherwise, we should use reference or const reference
+
+### Exercise 6.31
+
+When is it valid to return a reference? A reference to const?
+
+> It is valid to return a reference when you refer to a pre-existed object. A reference to const when you don't want the pre-existed object to be modified
+
+### Exercise 6.32
+
+Indicate whether the following function is legal. If so, explain what it does; if not, correct any errors and then explain it.
+
+```c
+int &get(int *arry, int index) { return arry[index]; }
+int main() {
+    int ia[10];
+    for (int i = 0; i != 10; ++i)
+        get(ia, i) = i;
+}
+```
+> Legal, the program assign value from 0 to 9 to `arry`
+
+### Exercise 6.35
+
+In the call to fact, why did we pass val - 1 rather than val--?
+
+> Because the recursive function will use val before it is decremented. This leads to an infinite loop
+
+### Exercise 6.36
+
+Write the declaration for a function that returns a reference to an array of ten strings, without using either a trailing return, decltype, or a type alias.
+
+```c
+string (&get_string_array())[10];
+```
+
+### Exercise 6.37
+
+Write three additional declarations for the function in the previous exercise. One should use a type alias, one should use a trailing return, and the third should use decltype. Which form do you prefer and why?
+
+```c
+// type alias
+using arrT = string[10];
+arrT& get_string_array();
+```
+
+```c
+// trailing return
+auto get_string_array() -> string(&)[10];
+```
+
+```c
+// decltype
+string arr[10];
+decltype(arr) &get_string_array();
+```
+
+> I prefer type alias because it is easy to understand
+
+### Exercise 6.38
+
+Revise the arrPtr function on to return a reference to the array.
+
+```c
+decltype(odd) &arrPtr(int i) {
+    return (i % 2) ? odd : even;
+}
+```
