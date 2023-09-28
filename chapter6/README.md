@@ -249,6 +249,62 @@ decltype(odd) *arrPtr(int i) {
 }
 ```
 
+## 6.4. Overloaded Functions
+
+- Functions that have the same name but different parameter lists and that appear in the same scope are *overloaded*
+
+Example:
+
+```c
+void print(const char *cp);
+void print(const int *beg, const int *end);
+void print(const int ia[], size_t size);
+```
+
+- The main function may not be overloaded
+- Overloading lets us avoid inventing (and remembering) nanes for common operations, but we should only overload operations that actually do similar things
+
+Example:
+
+```c
+// Consider a set of functions that move the cursor on a Screen
+
+// Easier to understand
+Screen& moveHome();
+Screen& moveAbs(int, int);
+Screen& moveRel(int, int, string direction);
+
+// Lost information that was inherent in the function names
+Screen& move();
+Screen& move(int, int);
+Screen& move(int, int, string direction);
+```
+
+- *Function matching* (aka *overload resolution*): the process by which a particular function call is associated with a specific function from a set of overloaded functions
+
+### 6.4.1. Overloading and Scope
+
+- If we declare a name in an inner scope, that name hides uses of that name declared in an outer scope
+
+Example:
+
+```c
+string read();
+void print(const string &);
+void print(double); // overloads the print function
+void fooBar(int ival) {
+    bool read = false; // new scope: hides the outer declaration of read
+    string s = read(); // error: read is a bool variable, not a function
+    // bad practice: usually it's a bad idea to declare functions at local scope
+    void print(int); // new scope: hides previous instances of print
+    print("Value: "); // error: print(const string &) is hidden
+    print(ival); // ok: print(int) is visible
+    print(3.14); // ok: calls print(int); print(double) is hidden
+}
+```
+
+- In C++, name lookup happens before type checking.
+
 ## Exercises
 
 ### Exercise 6.1
@@ -428,3 +484,28 @@ decltype(odd) &arrPtr(int i) {
     return (i % 2) ? odd : even;
 }
 ```
+
+### Exercise 6.39
+
+Explain the effect of the second declaration in each one of the following sets of declarations. Indicate which, if any, are illegal.
+
+```c
+(a) int calc(int, int);
+    int calc(const int, const int);
+```
+
+> Legal
+
+```c
+(b) int get();
+    double get();
+```
+
+> Illegal, only return type is different
+
+```c
+(c) int *reset(int *);
+    double *reset(double *);
+```
+
+> Legal, parameter type is different
