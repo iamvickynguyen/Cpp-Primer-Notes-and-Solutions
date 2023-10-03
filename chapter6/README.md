@@ -305,6 +305,66 @@ void fooBar(int ival) {
 
 - In C++, name lookup happens before type checking.
 
+## 6.5. Features for Specialized Uses
+
+### 6.5.1. Default Arguments
+
+- *Default argument*: some parameters of a function have given values
+- Functions with default arguments can be called with or without that argument 
+
+Example:
+
+```c
+void foo(int a, string b = "hello") {/*...*/}
+```
+
+### 6.5.2. Inline and `constexpr` Functions
+
+- Function call is slower than evaluating the equivalent expression
+- Function call does a lot of work: registers are saved before the call and restored after the return; arguments may be copied; and the program branches to a new location
+- *Inline* functions avoid function call overhead. The program will copy the function and paste to the places the function is called
+- The inline specification is only a request to the compiler. The compiler may choose to ignore this request
+- *Inline* mechanism is meant to optimize small, straight-line functions that are called frequently. Many compilers won't inline a recursive function
+
+Example:
+
+```c
+inline shorterString(string &a, string &b) {/*...*/}
+cout << shorterString(s1, s2) << endl;
+
+// during compilation, it will be expanded into
+cout << (s1.size() < s2.size() ? s1 : s2) << endl;
+```
+
+- `constexpr` function: a function that can be used in a constant expression
+- A `constexpr` function must meet certain criteria:
+    - The return type and the type of each parameter must be a literal type
+    - The function body must contain exactly 1 return statement
+
+Example:
+
+```c
+constexpr int new_sz() { return 42; }
+constexpr int foo = new_sz(); // ok: foo is a constant expression
+```
+
+- `constexpr` function can return a non-constant value
+
+Example:
+
+```c
+// scale(arg) is a constant expression if arg is a constant expression
+constexpr size_t scale(size_t cnt) { return new_sz() * cnt; }
+```
+
+- A `constexpr` function is not required to return a constant expression
+- `inline` and `constexpr` functions normally are defined in headers
+
+### 6.5.3. Aids for Debugging
+
+- `assert` and `NDEBUG`
+- If `NDEBUG` is defined, `assert` does nothing
+
 ## Exercises
 
 ### Exercise 6.1
@@ -509,3 +569,40 @@ Explain the effect of the second declaration in each one of the following sets o
 ```
 
 > Legal, parameter type is different
+
+### Exercise 6.40
+
+Which, if either, of the following declarations are errors? Why?
+
+```c
+(a) int ff(int a, int b = 0, int c = 0); // ok
+(b) char *init(int ht = 24, int wd, char bckgrnd); // error, missing default values for 'wd' and 'bckgrnd'
+```
+
+### Exercise 6.41
+
+Which, if any, of the following calls are illegal? Why? Which, if any, are legal but unlikely to match the programmer’s intent? Why?
+
+```c
+char *init(int ht, int wd = 80, char bckgrnd = ' ');
+(a) init(); // illegal, missing parameter 'ht'
+(b) init(24,10); // legal
+(c) init(14, '*'); // legal but not match the intention, should call init(14, 80, '*')
+```
+
+### Exercise 6.43
+
+Which one of the following declarations and definitions would you put in a header? In a source file? Explain why.
+
+```c
+(a) inline bool eq(const BigInt&, const BigInt&) {...}
+(b) void putValues(int *arr, int size);
+```
+
+> I will put both in a header file because (a) is an inline function and (b) is a function declaration. They normally are defined in the header
+
+### Exercise 6.46
+
+Would it be possible to define isShorter as a constexpr? If so, do so. If not, explain why not.
+
+> No, because a `constexpr` function must not take runtime actions. However, `std::string::size()` is not a constant expression
