@@ -1,5 +1,63 @@
 # Chapter 6. Functions
 
+<!-- vim-markdown-toc GFM -->
+
+* [6.1. Function Basics](#61-function-basics)
+    * [6.1.1. Local Objects](#611-local-objects)
+    * [6.1.3. Separate Compilation](#613-separate-compilation)
+* [6.2. Argument Passing](#62-argument-passing)
+    * [6.2.2. Passing Arguments by Reference](#622-passing-arguments-by-reference)
+    * [6.2.3. `const` Parameters and Arguments](#623-const-parameters-and-arguments)
+    * [6.2.4. Array Parameters](#624-array-parameters)
+    * [6.2.5. `main`: Handling Command-Line Options](#625-main-handling-command-line-options)
+    * [6.2.6. Functions with Varying Parameters](#626-functions-with-varying-parameters)
+* [6.3. Return Types and the `return` Statement](#63-return-types-and-the-return-statement)
+    * [6.3.1. Functions with No Return Value](#631-functions-with-no-return-value)
+    * [6.3.2. Functions That Return a Value](#632-functions-that-return-a-value)
+    * [6.3.3. Returning a Pointer to an Array](#633-returning-a-pointer-to-an-array)
+* [6.4. Overloaded Functions](#64-overloaded-functions)
+    * [6.4.1. Overloading and Scope](#641-overloading-and-scope)
+* [6.5. Features for Specialized Uses](#65-features-for-specialized-uses)
+    * [6.5.1. Default Arguments](#651-default-arguments)
+    * [6.5.2. Inline and `constexpr` Functions](#652-inline-and-constexpr-functions)
+    * [6.5.3. Aids for Debugging](#653-aids-for-debugging)
+* [6.6. Function Matching](#66-function-matching)
+    * [6.6.1. Argument Type Conversions](#661-argument-type-conversions)
+* [6.7. Pointers to Functions](#67-pointers-to-functions)
+* [Exercises](#exercises)
+    * [Exercise 6.1](#exercise-61)
+    * [Exercise 6.6](#exercise-66)
+    * [Exercise 6.7](#exercise-67)
+    * [Exercise 6.8](#exercise-68)
+    * [Exercise 6.9](#exercise-69)
+    * [Exercise 6.10](#exercise-610)
+    * [Exercise 6.12](#exercise-612)
+    * [Exercise 6.16](#exercise-616)
+    * [Exercise 6.18](#exercise-618)
+    * [Exercise 6.20](#exercise-620)
+    * [Exercise 6.21](#exercise-621)
+    * [Exercise 6.24](#exercise-624)
+    * [Exercise 6.29](#exercise-629)
+    * [Exercise 6.31](#exercise-631)
+    * [Exercise 6.32](#exercise-632)
+    * [Exercise 6.35](#exercise-635)
+    * [Exercise 6.36](#exercise-636)
+    * [Exercise 6.37](#exercise-637)
+    * [Exercise 6.38](#exercise-638)
+    * [Exercise 6.39](#exercise-639)
+    * [Exercise 6.40](#exercise-640)
+    * [Exercise 6.41](#exercise-641)
+    * [Exercise 6.43](#exercise-643)
+    * [Exercise 6.46](#exercise-646)
+    * [Exercise 6.48](#exercise-648)
+    * [Exercise 6.52](#exercise-652)
+    * [Exercise 6.53](#exercise-653)
+    * [Exercise 6.54](#exercise-654)
+    * [Exercise 6.55](#exercise-655)
+    * [Exercise 6.56](#exercise-656)
+
+<!-- vim-markdown-toc -->
+
 ## 6.1. Function Basics
 
 ### 6.1.1. Local Objects
@@ -365,6 +423,170 @@ constexpr size_t scale(size_t cnt) { return new_sz() * cnt; }
 - `assert` and `NDEBUG`
 - If `NDEBUG` is defined, `assert` does nothing
 
+## 6.6. Function Matching
+
+- *Candidate function*: a function in the overloaded functions set. Has the same name as the called function and is visible at the point of the call
+- *Viable function*: a function, from the set of candidate functions, that has the same number of parameters as the arguments in the call, and same each type must match
+- Function matching determines which viable function is the "best" match
+- The overall best match is the one and only one function which:
+    - The match for each argument is no worse than the match required by any other viable function
+    - There is >= 1 argument for which the match is better than the match provided by any other viable function
+
+Example:
+
+```c
+f(int, int);
+f(double, double);
+f(42, 2.56); // compiler will reject this call because it's ambiguous
+```
+
+- Casts should not be needed to call an overloaded function. The need for a cast suggests that the parameter sets are designed poorly
+
+### 6.6.1. Argument Type Conversions
+
+- To determine the best match, the compiler ranks the conversions as follows:
+    1. An exact match
+        - The argument and parameter types are identical
+        - The argument is converted from an array or function type to the corresponding pointer type
+        - A top-level `const` is added to or discarded fromt the argument
+    2. Match through a `const` conversion
+    3. Match through a promotion
+    4. Match through an arithmetic or pointer conversion
+    5. Match through a class-type conversion
+- Promotions and conversions among the built-in types can yield surprising results in the context of function matching. Well-designed systems rarely include functions with similar parameters
+
+Example:
+
+```c
+// Matches requiring promotion or arithmetic conversion
+void ff(int);
+void ff(short);
+ff('a'); // char promotes to int; calls f(int)
+
+void manip(long);
+void manip(float);
+manip(3.14); // error: ambiguous call
+             // 3.14 is a double, which can be converted to either long or float
+```
+
+```c
+// Matches with const arguments
+Record lookup(Account&); // function that takes a reference to Account
+Record lookup(const Account&); // new function that takes a const reference
+const Account a;
+Account b;
+lookup(a); // calls lookup(const Account&)
+lookup(b); // calls lookup(Account&)
+```
+
+## 6.7. Pointers to Functions
+
+- A function pointer is a pointer that denotes a function
+
+Example:
+
+```c
+// pf points to a function returning bool that takes two const string references
+bool (*pf)(const string &, const string &); // uninitialized
+```
+
+- When using the name of a function as a value, the function is automatically converted to a pointer
+
+Examples:
+
+```c
+pf = lengthCompare; // pf now points to the function named lengthCompare
+pf = &lengthCompare; // equivalent assignment: address-of operator is optional
+```
+
+```c
+bool b1 = pf("hello", "goodbye"); // calls lengthCompare
+bool b2 = (*pf)("hello", "goodbye"); // equivalent call
+bool b3 = lengthCompare("hello", "goodbye"); // equivalent call
+```
+
+- When declaring a pointer to an overloaded function, the compiler uses the type of the pointer to determine which overloaded function to use
+
+Example:
+
+```c
+void ff(int*);
+void ff(unsigned int);
+void (*pf1)(unsigned int) = ff; // pf1 points to ff(unsigned)
+```
+
+```c
+void (*pf2)(int) = ff; // error: no ff with a matching parameter list
+double (*pf3)(int*) = ff; // error: return type of ff and pf3 don't match
+```
+
+- We cannot define parameters of function type, but can have a parameter that is a pointer to function
+
+Example:
+
+```c
+// third parameter is a function type and is automatically treated as a pointer to function
+void useBigger(const string &s1, const string &s2,
+    bool pf(const string &, const string &));
+// equivalent declaration: explicitly define the parameter as a pointer to function
+void useBigger(const string &s1, const string &s2,
+    bool (*pf)(const string &, const string &));
+```
+
+```c
+// automatically converts the function lengthCompare to a pointer to function useBigger(s1, s2, lengthCompare);
+```
+
+- Type aliases and `decltype` help simplify code
+
+Example:
+
+```c
+// Func and Func2 have function type
+typedef bool Func(const string&, const string&);
+typedef decltype(lengthCompare) Func2; // equivalent type
+
+// FuncP and FuncP2 have pointer to function type
+typedef bool(*FuncP)(const string&, const string&);
+typedef decltype(lengthCompare) *FuncP2; // equivalent type
+
+// equivalent declarations of useBigger using type aliases
+void useBigger(const string&, const string&, Func);
+void useBigger(const string&, const string&, FuncP2);
+```
+
+- We cannot return a function, but can return a pointer to a function
+
+Example:
+
+```c
+using F = int(int*, int); // F is a function type, not a pointer
+using PF = int(*)(int*, int); // PF is a pointer type
+```
+
+```c
+PF f1(int); // ok: PF is a pointer to function; f1 returns a pointer to function
+F f1(int); // error: F is a function type; f1 can't return a function
+F *f1(int); // ok: explicitly specify that the return type is a pointer to function
+
+// can also declare f1 directly
+int (*f1(int))(int*, int);
+auto f1(int) -> int (*)(int*, int); // similar, using trailing return
+```
+
+- `decltype` returns a function type, not a pointer to function type. Thus, we must add a `*`
+
+Example:
+
+```c
+string::size_type sumLength(const string&, const string&);
+string::size_type largerLength(const string&, const string&);
+
+// depending on the value of its string parameter,
+// getFcn returns a pointer to sumLength or to largerLength
+decltype(sumLength) *getFcn(const string &);
+```
+
 ## Exercises
 
 ### Exercise 6.1
@@ -606,3 +828,81 @@ Which one of the following declarations and definitions would you put in a heade
 Would it be possible to define isShorter as a constexpr? If so, do so. If not, explain why not.
 
 > No, because a `constexpr` function must not take runtime actions. However, `std::string::size()` is not a constant expression
+
+### Exercise 6.48
+
+Explain what this loop does and whether it is a good use of assert:
+
+```c
+string s;
+while (cin >> s && s != sought) { } // empty body
+assert(cin);
+```
+
+> The loop keeps reading input until it is sought. It isn't a good use of assert because assert will always happen when a user inputs EOF directly. Using `(assert(!cin || s == sought))` is better.
+
+### Exercise 6.52
+
+Given the following declarations,
+
+void manip(int, int);
+double dobj;
+
+what is the rank (§ 6.6.1, p. 245) of each conversion in the following calls?
+
+```c
+(a) manip('a', 'z'); // rank 3, promotion
+(b) manip(55.4, dobj); // rank 4, arithmetic conversion
+```
+
+### Exercise 6.53
+
+Explain the effect of the second declaration in each one of the following sets of declarations. Indicate which, if any, are illegal.
+
+```c
+(a) int calc(int&, int&);
+    int calc(const int&, const int&); // legal
+
+(b) int calc(char*, char*);
+    int calc(const char*, const char*); // legal
+
+(c) int calc(char*, char*);
+    int calc(char* const, char* const); // illegal, top-level const is omit
+```
+
+### Exercise 6.54
+
+Write a declaration for a function that takes two int parameters and returns an int, and declare a vector whose elements have this function pointer type.
+
+```c
+int f(int a, int b);
+
+vector<int(*)(int, int)> vec1;
+
+using pf = decltype(f)*;
+vector<pf> vec2;
+```
+
+### Exercise 6.55
+
+Write four functions that add, subtract, multiply, and divide two int values. Store pointers to these values in your vector from the previous exercise.
+
+```c
+int add(int a, int b) { return a + b; }
+int sub(int a, int b) { return a - b; }
+int mul(int a, int b) { return a * b; }
+int div(int a, int b) { return b != 0 ? a / b : 0; }
+
+vec1.push_back(add);
+vec1.push_back(sub);
+vec1.push_back(mul);
+vec1.push_back(div);
+```
+
+### Exercise 6.56
+
+Call each element in the vector and print their result.
+
+```c
+for (auto f: vec1) std::cout << f(1, 2) << '\n';
+```
