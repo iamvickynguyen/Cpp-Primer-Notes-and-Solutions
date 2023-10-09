@@ -44,7 +44,7 @@ Sales_data(const std::string &s, unsigned n, double p):
 
 - A class allows another class or function to access non-public members by making them a `friend`
 - *Friends* are not members of the class
-- Must declare a *friend* function with keyword *friend* inside a class. Good practice to also declare the *friend* function outside the class
+- Must declare a `friend` function with keyword `friend` inside a class. Good practice to also declare the `friend` function outside the class
 
 ## Exercises
 
