@@ -35,6 +35,17 @@ Sales_data(const std::string &s, unsigned n, double p):
 
 - Although the compiler will synthesize the copy, assignment, and destruction operations, for some classes the default versions do not behave appropriately (ie., synthesized versions may not work correctly for classes that allocate resources the reside outside the class objects)
 
+## 7.2. Access Control and Encapsulation
+
+- *Access specifier*: enforce encapsulation with `public` and `private`
+- The only difference between `class` and `struct` is the default access level: members are default `private` in `class`, and `public` in `struct`
+
+### 7.2.1. Friends
+
+- A class allows another class or function to access non-public members by making them a `friend`
+- *Friends* are not members of the class
+- Must declare a *friend* function with keyword *friend* inside a class. Good practice to also declare the *friend* function outside the class
+
 ## Exercises
 
 ### Exercise 7.4
@@ -60,3 +71,11 @@ if (read(read(cin, data1), data2))
 ```
 
 > It reads a string into `data1` then read another string to `data2`. The `if` condition reads 2 strings at one time
+
+### Exercise 7.18
+
+What is encapsulation? Why is it useful?
+
+> Encapsulation is the separation of the interface and implementation. In C++, it hides the implementation details by putting the implementation in the private part of a class
+
+> It is useful because users cannot change the state of an encapsulated object, and the implementation part can be changed without requiring changes in the user-level code
