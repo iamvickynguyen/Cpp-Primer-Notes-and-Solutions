@@ -46,6 +46,26 @@ Sales_data(const std::string &s, unsigned n, double p):
 - *Friends* are not members of the class
 - Must declare a `friend` function with keyword `friend` inside a class. Good practice to also declare the `friend` function outside the class
 
+## 7.3. Additional Class Features
+
+### 7.3.1. Class Members Revisited (example in the book)
+
+- Define a local name for a type member
+
+Example:
+
+```c
+class Screen {
+public:
+    typedef std::string::size_type pos;
+
+    // alternative way to declare a type member using a type alias
+    // using pos = std::string::size_type;
+private:
+    pos cursor = 0;
+};
+```
+
 ## Exercises
 
 ### Exercise 7.4
@@ -79,3 +99,9 @@ What is encapsulation? Why is it useful?
 > Encapsulation is the separation of the interface and implementation. In C++, it hides the implementation details by putting the implementation in the private part of a class
 
 > It is useful because users cannot change the state of an encapsulated object, and the implementation part can be changed without requiring changes in the user-level code
+
+### Exercise 7.25
+
+Can Screen safely rely on the default versions of copy and assignment? If so, why? If not, why not?
+
+> Yes because synthesized versions of copy and assignment work correctly for classes that have vector or string members
