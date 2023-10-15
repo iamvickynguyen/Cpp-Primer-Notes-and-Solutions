@@ -66,6 +66,33 @@ private:
 };
 ```
 
+7.3.2. Functions That Return `*this`
+
+- Functions that return a reference are *lvalues*, which means they return the object itself, not a copy
+
+Example:
+
+```c
+class Screen {
+public:
+    Screen &set(char);
+    Screen &set(pos, pos, char);
+    // other members as before
+};
+
+inline Screen &Screen::set(char c) {
+    contents[cursor] = c; // set the new value at the current cursor location
+    return *this; // return this object as an lvalue
+}
+
+inline Screen &Screen::set(pos r, pos col, char ch) {
+    contents[r*width + col] = ch; // set specified location to given value
+    return *this; // return this object as an lvalue
+}
+```
+
+- A `const` member function that returns `*this` as a reference should have a return type that is a reference to `const`.
+
 ## Exercises
 
 ### Exercise 7.4
