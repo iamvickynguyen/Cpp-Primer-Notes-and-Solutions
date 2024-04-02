@@ -66,7 +66,7 @@ private:
 };
 ```
 
-7.3.2. Functions That Return `*this`
+### 7.3.2. Functions That Return `*this`
 
 - Functions that return a reference are *lvalues*, which means they return the object itself, not a copy
 
@@ -92,6 +92,51 @@ inline Screen &Screen::set(pos r, pos col, char ch) {
 ```
 
 - A `const` member function that returns `*this` as a reference should have a return type that is a reference to `const`.
+
+### 7.3.4 Friendship Revisited
+
+- A class can make another class as its friend or it can make some specific member functions of another class as friends.
+
+Example:
+
+```c
+// Example of making a class as a friend
+
+class Screen {
+    // Window_mgr members can access the private parts of class Screen
+    friend class Window_mgr;
+    // ... rest of the Screen class
+};
+
+class Window_mgr {
+public:
+    // location ID for each screen on the window
+    using ScreenIndex = std::vector<Screen>::size_type;
+
+    // reset the Screen at the given position to all blanks
+    void clear(ScreenIndex);
+
+private:
+    std::vector<Screen> screens {Screen(24, 80, ' ')};
+};
+
+void Window_mgr::clear(ScreenIndex i) {
+    // s is a reference to the Screen we want to clear
+    Screen &s = screens[i];
+    // reset the content of that Screen to all blanks
+    s.contents = string(s.height * s.width, ' ');
+}
+```
+
+```c
+// Example of making a member function a friend
+
+class Screen {
+    // Window_mgr::clear must have been declared before class Screen
+    friend void Window_mgr::clear(ScreenIndex);
+    // ... rest of the Screen class
+};
+```
 
 ## Exercises
 
