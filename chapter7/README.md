@@ -146,4 +146,25 @@ cout << "\n";
 ```
 
 [Code](e7_27.cpp)
+
+### Exercise 7.28
+
+What would happen in the previous exercise if the return type of `move`, `set`, and `display` was `Screen` rather than `Screen&` ?
+
+> Our object won't change 
+
+### Exercise 7.31
+
+Define a pair of classes X and Y, in which X has a pointer to Y, and Y has an object of type X.
+
+```c
+class X {
+public:
+    Y *y;    
+};
+
+class Y {
+public:
+    X x;
+};
 ```
