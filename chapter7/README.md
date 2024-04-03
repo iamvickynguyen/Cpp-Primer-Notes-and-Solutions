@@ -138,6 +138,62 @@ class Screen {
 };
 ```
 
+## 7.4. Class Scope
+
+- Every class has its own scope
+- Outside the class scope, ordinary data and function members may be accessed through an object, a reference, or a pointer using a *member access operator* (see 4.6).
+
+### 7.4.1. Name Lookup and Class Scope
+
+- Class definitions are processed in 2 stages:
+    1. The member declarations are compiled
+    2. Then, the function bodies are compiled 
+- A name used in the body of a member function is resolved as follows:
+    1. First, look for a declaration of the name inside the member function
+    2. If not found, look for a declaration inside the class
+    3. If not found, look for a declaration that is in the scope before the member function definition
+- It is a bad practice to use a same name for a parameter and a member.
+
+Example:
+
+```c
+// For illustration purposes. This is a bad practice.
+
+int height;
+
+class Screen {
+public:
+    typedef std::string::size_type pos;
+    void dummy_fn(pos height) {
+        cursor = width * height; // which height? the parameter
+    }
+
+private:
+    pos cursor = 0;
+    pos height = 0, width = 0;
+};
+```
+
+- In the example above, the `height` parameter hides the member named `height`. To override the normal lookup rules, we can do:
+
+```c
+void Screen::dummy_fn(pos height) {
+    cursor = width * this->height; // member height
+
+    // alternative way to indicate the member
+    cursor = width * Screen::height; // member height
+}
+```
+
+- If we want the name from the outer scope, we can use the *scope operator*
+
+```c
+// Bad practice. Don't hide names that are needed from surrounding scopes
+void Screen::dummy_fn(pos height) {
+    cursor = width * ::height; // which height? the global one
+}
+```
+
 ## Exercises
 
 ### Exercise 7.4
@@ -213,3 +269,56 @@ public:
     X x;
 };
 ```
+
+### Exercise 7.34
+
+What would happen if we put the `typedef` of `pos` in the `Screen` class on page 285 as the last line in the class?
+
+> There would be an error: unknow type name pos
+
+### Exercise 7.35
+
+Explain the following code, indicating which definition of `Type` or `initVal` is used for each use of those names. Say how you would fix any errors.
+
+```c
+typedef string Type;
+Type initVal(); // string
+
+class Exercise {
+public:
+	typedef double Type;
+	Type setVal(Type); // double
+	Type initVal(); // double
+
+private:
+	int val;
+};
+
+Type Exercise::setVal (Type parm) { // string, double
+	val = parm + initVal(); // Exercise::initVal()
+	return val;
+}
+```
+
+Fix: change to `Exercise::Type`. Changing names would be a good solution as well.
+
+```c
+typedef string Type;
+Type initVal();
+
+class Exercise {
+public:
+	typedef double Type;
+	Type setVal(Type);
+	Type initVal();
+
+private:
+	int val;
+};
+
+Exercise::Type Exercise::setVal (Type parm) {
+	val = parm + initVal();
+	return val;
+}
+```
+
