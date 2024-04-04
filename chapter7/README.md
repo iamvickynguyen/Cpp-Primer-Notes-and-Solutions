@@ -246,6 +246,37 @@ public:
 
 ### 7.5.3. The Role of the Default Constructor
 
+- *Default constructor* is used automatically when an object is default or value initialized.
+- Default initialization happens when:
+    - We define *nonstatic* variables (section 2.2.1) or arrays at block scope without initializers
+    - A class has members of class type uses the *synthesized default constructor* (section 7.1.4)
+    - Class members are not explicitly initialized in a *constructor initializer list* (section 7.1.4)
+- Value initialization happens:
+    - During array initialization when we provide fewer initializers than the size of the arrays
+    - When we define a local static object without an initializer (section 6.1.1)
+    - When we explicitly request value initialization by writing an expression of the form `T()`, where `T` is the name of a type (i.e., `vector`)
+
+Example:
+
+```c
+class NoDefault {
+public:
+    NoDefault (const std::string&);
+    // additional members follow, but no other constructors
+};
+
+struct A {
+    NoDefault my_mem;
+};
+
+A a; // error: cannot synthesize a constructor for A
+
+struct B {
+    B() {} // error: no initializer for b_member
+    NoDefault b_member;
+};
+```
+
 ## Exercises
 
 ### Exercise 7.4
@@ -392,3 +423,34 @@ public:
 Would it be legal for both the constructor that takes a `string` and the one that takes an `istream&` to have default arguments? If not, why not?
 
 > Illegal, because the call of overloaded `Sales_data()` is ambiguous.
+
+### Exercise 7.43
+
+Assume we have a class named `NoDefault` that has a constructor that takes an `int`, but has no default constructor. Define a class `C` that has a member of type `NoDefault`. Define the default constructor for `C`.
+
+```c
+class NoDefault {
+public:
+    NoDefault (int) {}
+};
+
+class C {
+public:
+    C(): c_mem(0) {}
+
+private:
+    NoDefault c_mem;
+};
+```
+
+### Exercise 7.44
+
+Is the following declaration legal? If not, why not? `vector<NoDefault> vec(10);`
+
+> No, because there is no default constructor for each of the 10 `NoDefault` elements. 
+
+### Exercise 7.45
+
+What if we defined the vector in the previous exercise to hold objects of type `C`?
+
+> Ok, because there is a default constructor for `C`
