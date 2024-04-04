@@ -194,6 +194,58 @@ void Screen::dummy_fn(pos height) {
 }
 ```
 
+## 7.5. Constructors Revisited
+
+### 7.5.1. Constructor Initializer List
+
+- We can often ignore the distinction between whether a member is initialized or assigned.
+- Members that are `const` or *references* must be initialized.
+- Members of a class type that does not define a default constructor must be initialized.
+
+Example:
+
+```c
+class ConstRef {
+public:
+    ConstRef (int ii);
+private:
+    int i;
+    const int ci;
+    int &ri;
+};
+```
+
+```c
+ConstRef::ConstRef (int ii) {
+    i = ii; // ok
+    ci = ii; // error: cannot assign to a const
+    ri = i; // error: ri was never initialized
+}
+
+// Note: by the time the body of the constructor begins executing, initialization is complete.
+```
+
+```c
+// ok: explicitly initialize reference and const members
+ConstRef::ConstRef (int ii): i(ii), ci(ii), ri(i) {}
+```
+
+- **Best practice**: write constructor initializers in the same order as the members are declared. When possible, avoid using members to initialize other members.
+
+Example:
+
+```c
+class X {
+    int i;
+    int j;
+public:
+    // undefined: i is initialized before j
+    X (int val): j(val), i(j) {}
+};
+```
+
+### 7.5.3. The Role of the Default Constructor
+
 ## Exercises
 
 ### Exercise 7.4
@@ -322,3 +374,21 @@ Exercise::Type Exercise::setVal (Type parm) {
 }
 ```
 
+### Exercise 7.38
+
+We might want to supply `cin` as a default argument to the constructor that takes an `istream&`. Write the constructor declaration that uses `cin` as a default argument.
+
+```c
+class Sales_data {
+public:
+    Sales_data (std::istream &is = std::cin) {
+        read(is, *this);
+    }
+};
+```
+
+### Exercise 7.39
+
+Would it be legal for both the constructor that takes a `string` and the one that takes an `istream&` to have default arguments? If not, why not?
+
+> Illegal, because the call of overloaded `Sales_data()` is ambiguous.
