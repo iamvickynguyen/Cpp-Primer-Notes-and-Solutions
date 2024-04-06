@@ -277,6 +277,54 @@ struct B {
 };
 ```
 
+### 7.5.4. Implicit Class-Type Conversions
+
+- A constructor that can be called with a single argument defines an implicit conversion from the constructor's parameter type to the class type.
+
+Example:
+
+```c
+string null_book = "9-999-9999";
+
+// constructs a temporary Sales_data object
+// with units_sold and revenue are 0 and bookNo equal to null_book
+item.combine(null_book);
+
+// Since combine's parameter is a reference to const, we can pass a temporary to that parameter
+```
+
+- Suppress implicit conversions defined by constructors with `explicit` keyword.
+
+Example:
+
+```c
+class Sales_data {
+public:
+    Sales_data() = default;
+    Sales_data(const std::string &s, unsigned n, double p): bookNo(s), units_sold(n), revenue(p * n) {}
+    explicit Sales_data(const std::string &s): bookNo(s) {}
+    explicit Sales_data(std::istream&);
+    // remaining members as before
+}
+```
+
+```c
+item.combine(null_book); // error: string constructor is explicit
+item.combine(cin); // error: istream constructor is explicit
+```
+
+- Force a conversion
+
+Example:
+
+```c
+// ok: the argument is an explicit constructed Sales_data object
+item.combine(Sales_data(null_book));
+
+// ok: static_cast can use an explicit constructor
+item.combine(static_cast<Sales_data>(cin));
+```
+
 ## Exercises
 
 ### Exercise 7.4
@@ -454,3 +502,29 @@ Is the following declaration legal? If not, why not? `vector<NoDefault> vec(10);
 What if we defined the vector in the previous exercise to hold objects of type `C`?
 
 > Ok, because there is a default constructor for `C`
+
+### Exercise 7.47
+
+Explain whether the `Sales_data` constructor that takes a string should be `explicit`. What are the benefits of making the constructor `explicit`? What are the drawbacks?
+
+> It depends on "how we think our usedrs will use the conversion" (textbook)
+
+> **Pros**: Prevent the use of constructors in a context that requires implicit conversions
+
+> **Cons**: Meaningful only on constructors that can be called with a single argument
+
+### Exercise 7.50
+
+Determine whether any of your Person class constructors should be explicit.
+
+```c
+explicit Person(std::istream &is) { read(is, *this); }
+```
+
+### Exercise 7.51
+
+Why do you think `vector` defines its single-argument constructor as `explicit`, but `string` does not?
+
+> - `int getSize(const std::vector<int>&);` : if `vector` doesn't define its single-argument constructor, we can do `getSize(10)`. This is confusing.
+
+> - `void setName(std::string);` : we can use `std::string` to replace `const char*` when we call `setName("Vicky");`
