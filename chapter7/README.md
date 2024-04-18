@@ -325,6 +325,35 @@ item.combine(Sales_data(null_book));
 item.combine(static_cast<Sales_data>(cin));
 ```
 
+### 7.5.5. Aggregate Classes
+
+- An *aggregate class* gives users direct access to its members and has special initialization syntax.
+- A class is an aggregate if:
+    - All data members are `public`
+    - No constructors
+    - No in-class initializers (section 2.6.1)
+    - No base classes or `virtual` functions
+
+Example:
+
+```c
+struct Data {
+    int ival;
+    string s;
+};
+
+// val1.ival = 0; val1.s = string("Anna")
+Data val1 = { 0, "Anna" };
+
+// error: can't use "Anna" to initialize ival, or 1024 to initialize s
+Data val2 = { "Anna", 1024 };
+```
+
+- Drawbacks:
+    - Require all members to be `public`
+    - Users must correctly initialize every member of every object -> tedious and error-prone
+    - If a member is added or removed, all initializations have to be updated
+
 ## Exercises
 
 ### Exercise 7.4
