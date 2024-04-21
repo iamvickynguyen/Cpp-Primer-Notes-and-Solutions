@@ -354,6 +354,56 @@ Data val2 = { "Anna", 1024 };
     - Users must correctly initialize every member of every object -> tedious and error-prone
     - If a member is added or removed, all initializations have to be updated
 
+### 7.5.6. Literal Classes
+
+- Parameters and return type of a `constexpr` function must be literal types.
+- An *aggregate* class whose data members are all of literal type is a *literal* class.
+- A *non-aggregate* class, the meets the following restrictions, is also a *literal* class:
+    - All data members mst have literal type
+    - The class must have at least 1 `constexpr` constructor
+    - If a data member has an in-class initializer, the initializer for a member of built-in type must be a constant expression or if the member has a class type, the initializer must use the member own's `constexpr` constructor
+    - The class must use default definition for its destructor, which is the member that *destroys* objects of the class type
+
+#### `constexpr` Constructors
+
+- A `constexpr` constructor can be declared as `= default` (or as a deleted function, section 13.1.6)
+- The body of a `constexpr` constructor is typically empty
+
+Example:
+
+```c
+class Debug {
+public:
+    constexpr Debug(bool b = true): hw(b), io(b), other(b) {}
+    constexpr Debug(bool h, bool i, bool o): hw(h), io(i), other(o) {}
+    constexpr bool any() { return hw || io || other; }
+    void set_io(bool b) { io = b; }
+    void set_hw(bool b) { hw = b; }
+    void set_other(bool b) { hw = b; }
+
+private:
+    bool hw; // hardware errors other than IO errors
+    bool io; // IO errors
+    bool other; // other errors
+};
+```
+
+- A `constexpr` constructor must initialize every data member.
+- The initializers must either use a `constexpr` constructor or be a constant expression.
+- A `constexpr` constructor is used to generate `constexpr` objects that are `constexpr` and for parameters or return types in `constexpr` function.
+
+Example:
+
+```c
+constexpr Debug io_sub(false, true, false); // debugging IO
+if (io_sub.any())
+    cerr << "print error messages" << endl;
+
+constexpr Debug prod(false); // no debugging during production
+if (prod.any())
+    cerr << "print an error message" << endl;
+```
+
 ## Exercises
 
 ### Exercise 7.4
@@ -557,3 +607,15 @@ Why do you think `vector` defines its single-argument constructor as `explicit`,
 > - `int getSize(const std::vector<int>&);` : if `vector` doesn't define its single-argument constructor, we can do `getSize(10)`. This is confusing.
 
 > - `void setName(std::string);` : we can use `std::string` to replace `const char*` when we call `setName("Vicky");`
+
+### Exercise 7.54
+
+Should the members of `Debug` that begin with `set_` be declared as constexpr? If not, why not?
+
+> Cannot, because `constexpr` member functions are implicitly `const`.
+
+### Exercise 7.55
+
+Is the `Data` class from §7.5.5(p. 298) a literal class? If not, why not? If so, explain why it is literal.
+
+> No, because `std::string` isn't a literal type.
