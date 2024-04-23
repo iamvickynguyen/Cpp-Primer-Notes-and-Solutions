@@ -404,6 +404,153 @@ if (prod.any())
     cerr << "print an error message" << endl;
 ```
 
+## 7.6. `static` Class Members
+
+- `static` class members belong to the class, not any specific instance of the class.
+
+### Declaring `static` Members
+
+Example:
+
+```c
+class Account {
+public:
+    void calculate() { amount += amount * interestRate; }
+    static double rate() { return interesteRate; }
+    static void rate(double);
+
+private:
+    std::string owner;
+    double amount;
+    static double interestRate;
+    static double initRate();
+};
+```
+
+- Each `Account` object will have 2 data members: `owner` and `amount`.
+- There is only 1 `interestRate` object that will be shared by all the  `Account` objects.
+- Similarly, `static` member functions aren't bound to any object; they don't have a `this` pointer.
+- Thus, `static` member functions may not be declared as `const`.
+
+### Using a Class `static` Member
+
+Examples:
+
+```c
+double r;
+r = Account::rate(); // access a static member using the scope operator
+```
+
+```c
+Account ac1;
+Account *ac2 = &ac1;
+// equivalent ways to call the static member rate function
+r = ac1.rate(); // through an Account object or reference
+r = ac2->rate(); // through a pointer to an Account object
+```
+
+```c
+class Account {
+public:
+    // member functions can use static members directly
+    void calculate() { amount += amount * interestRate; }
+private:
+    static double interestRate;
+    // remaining members
+};
+```
+
+### Defining `static` Members
+
+- We can define a `static` member function inside or outside of the class body.
+- When defining outside, no need `static` keyword, but we must specify the class.
+
+Example:
+
+```c
+void Account::rate(double newRate) {
+    interestRate = newRate;
+}
+```
+
+- Since `static` data members aren't part of individual objects of the class type, they aren't defined when we create objects of the class.
+- Hence, they aren't initialized by the class' constructors.
+- In general, we may not initialize a `static` member inside the class. Instead, we must define and initialize it outside the class body.
+- Like any other object, a `static` data member may be defined once.
+- Like global objects, `static` data members are defined outside any function, and they continue to exist until the program completes.
+
+Example:
+
+```c
+// define and initialize a static class member
+double Account::interestRate = initRate();
+```
+
+- **Note**: The best way to ensure that the object is defined exactly once is to put the definition of `static` data members in the same file containing the definitions of the class noninline member functions.
+
+### In-Class Initialization of `static` Data Members
+
+- We can provide in-class initializers for `static` data members that have `const` integral type and must do so for `static` members that are `constexpr` of literal type (section 7.5.6).
+
+Example:
+
+```c
+class Account {
+public:
+    static double rate() { return interestRate; }
+    static void rate(double);
+
+private:
+    // period is a constant expression
+    static constexpr int period = 30;
+    double daily_tbl(period);
+};
+```
+
+- If an initializer is provided inside the class, the member's definition must not specify an initial value.
+
+Example:
+
+```c
+// definition of a static member with no initializer
+constexpr int Account::period; // initializer provided in the class definition
+```
+
+- **Best practice**: Even if a `const static` data member is initialized in the class body, that member ordinarily should be defined outside the class definition.
+
+### `static` Members Can Be Used in Ways Ordinary Members Can't
+
+- `static` data member can have incomplete type (section 7.3.3).
+
+Example:
+
+```c
+class Bar {
+public:
+    // ...
+private:
+    static Bar mem1; // ok: static member can have incomplet type
+    Bar *mem2; // ok: pointer member can have incomplete type
+    Bar mem3; // error: data members must have complete type
+};
+```
+
+- `static` member can be used as a default argument.
+
+Example:
+
+```c
+class Screen {
+public:
+    // bkground refers to the static member
+    // declared later in the class definition
+    Screen& clear(char = bkground);
+
+private:
+    static const char bkground;
+};
+```
+
 ## Exercises
 
 ### Exercise 7.4
@@ -619,3 +766,46 @@ Should the members of `Debug` that begin with `set_` be declared as constexpr? I
 Is the `Data` class from §7.5.5(p. 298) a literal class? If not, why not? If so, explain why it is literal.
 
 > No, because `std::string` isn't a literal type.
+
+### Exercise 7.58
+
+Which, if any, of the following static data member declarations and definitions are errors? Explain why.
+
+```c
+// example.h
+class Example {
+public:
+	static double rate = 6.5;
+	static const int vecSize = 20;
+	static vector<double> vec(vecSize);
+};
+
+// example.C
+#include "example.h"
+double Example::rate;
+vector<double> Example::vec;
+```
+
+Answer:
+
+> `static double rate = 6.5;` : Error, `static` data member can't be initialized within the class
+
+> `static vector<double> vec(vecSize);` : Error, `static` data member can't be initialized within the class
+
+Fix:
+
+```c
+// example.h
+class Example {
+public:
+    static double rate; // can also use constexpr and assign value here
+	static const int vecSize = 20;
+	static vector<double> vec;
+                                        
+};
+
+// example.C
+#include "example.h"
+double Example::rate = 6.5;
+vector<double> Example::vec(Example::vecSize);
+```
