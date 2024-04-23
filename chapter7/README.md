@@ -1,5 +1,57 @@
 # Chapter 7. Classes
 
+<!-- vim-markdown-toc GFM -->
+
+* [7.1. Defining Abstract Data Types](#71-defining-abstract-data-types)
+    * [7.1.2. Defining the Revised Sales\_data Class](#712-defining-the-revised-sales_data-class)
+    * [7.1.4. Constructors](#714-constructors)
+    * [7.1.5. Copy, Assignment, and Destruction](#715-copy-assignment-and-destruction)
+* [7.2. Access Control and Encapsulation](#72-access-control-and-encapsulation)
+    * [7.2.1. Friends](#721-friends)
+* [7.3. Additional Class Features](#73-additional-class-features)
+    * [7.3.1. Class Members Revisited (example in the book)](#731-class-members-revisited-example-in-the-book)
+    * [7.3.2. Functions That Return `*this`](#732-functions-that-return-this)
+    * [7.3.4 Friendship Revisited](#734-friendship-revisited)
+* [7.4. Class Scope](#74-class-scope)
+    * [7.4.1. Name Lookup and Class Scope](#741-name-lookup-and-class-scope)
+* [7.5. Constructors Revisited](#75-constructors-revisited)
+    * [7.5.1. Constructor Initializer List](#751-constructor-initializer-list)
+    * [7.5.3. The Role of the Default Constructor](#753-the-role-of-the-default-constructor)
+    * [7.5.4. Implicit Class-Type Conversions](#754-implicit-class-type-conversions)
+    * [7.5.5. Aggregate Classes](#755-aggregate-classes)
+    * [7.5.6. Literal Classes](#756-literal-classes)
+        * [`constexpr` Constructors](#constexpr-constructors)
+* [7.6. `static` Class Members](#76-static-class-members)
+    * [Declaring `static` Members](#declaring-static-members)
+    * [Using a Class `static` Member](#using-a-class-static-member)
+    * [Defining `static` Members](#defining-static-members)
+    * [In-Class Initialization of `static` Data Members](#in-class-initialization-of-static-data-members)
+    * [`static` Members Can Be Used in Ways Ordinary Members Can't](#static-members-can-be-used-in-ways-ordinary-members-cant)
+* [Exercises](#exercises)
+    * [Exercise 7.4](#exercise-74)
+    * [Exercise 7.5](#exercise-75)
+    * [Exercise 7.10](#exercise-710)
+    * [Exercise 7.18](#exercise-718)
+    * [Exercise 7.25](#exercise-725)
+    * [Exercise 7.27](#exercise-727)
+    * [Exercise 7.28](#exercise-728)
+    * [Exercise 7.31](#exercise-731)
+    * [Exercise 7.34](#exercise-734)
+    * [Exercise 7.35](#exercise-735)
+    * [Exercise 7.38](#exercise-738)
+    * [Exercise 7.39](#exercise-739)
+    * [Exercise 7.43](#exercise-743)
+    * [Exercise 7.44](#exercise-744)
+    * [Exercise 7.45](#exercise-745)
+    * [Exercise 7.47](#exercise-747)
+    * [Exercise 7.50](#exercise-750)
+    * [Exercise 7.51](#exercise-751)
+    * [Exercise 7.54](#exercise-754)
+    * [Exercise 7.55](#exercise-755)
+    * [Exercise 7.58](#exercise-758)
+
+<!-- vim-markdown-toc -->
+
 ## 7.1. Defining Abstract Data Types
 
 ### 7.1.2. Defining the Revised Sales\_data Class
