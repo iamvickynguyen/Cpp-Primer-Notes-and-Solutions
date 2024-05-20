@@ -3,6 +3,8 @@
 <!-- vim-markdown-toc GFM -->
 
 * [9.1. Overview of the Sequential Containers](#91-overview-of-the-sequential-containers)
+* [9.2. Container Library Overview](#92-container-library-overview)
+    * [9.2.1. Iterators](#921-iterators)
 
 <!-- vim-markdown-toc -->
 
@@ -27,4 +29,12 @@
 
 - [More about C++ containers](https://en.cppreference.com/w/cpp/container)
 - **Tip**: Use `vector`, unless there is a good reason to use another container.
+
+## 9.2. Container Library Overview
+
+### 9.2.1. Iterators
+
+- 2 iterators, `begin` and `end`, form an *iterator range*, if:
+    - They refer to elements of, or 1 past the end of, the same container
+    - Reach `end` by incrementing `begin`. `end` must not precede `begin`
 
