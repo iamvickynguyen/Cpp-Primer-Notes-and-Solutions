@@ -5,6 +5,11 @@
 * [9.1. Overview of the Sequential Containers](#91-overview-of-the-sequential-containers)
 * [9.2. Container Library Overview](#92-container-library-overview)
     * [9.2.1. Iterators](#921-iterators)
+    * [9.2.2. Container Type Members](#922-container-type-members)
+    * [9.2.4. Defining and Initializing a Container](#924-defining-and-initializing-a-container)
+    * [9.2.5. Assignment and `swap`](#925-assignment-and-swap)
+* [Exercises](#exercises)
+    * [Exercise 9.12:](#exercise-912)
 
 <!-- vim-markdown-toc -->
 
@@ -37,4 +42,106 @@
 - 2 iterators, `begin` and `end`, form an *iterator range*, if:
     - They refer to elements of, or 1 past the end of, the same container
     - Reach `end` by incrementing `begin`. `end` must not precede `begin`
+
+### 9.2.2. Container Type Members
+
+- To use the types, we must name the class.
+
+Example:
+
+```c
+list<string>::iterator iter;
+vector<int>::difference_type count;
+```
+
+- Best practices: When write access is not needed, use `cbegin` and `cend`.
+
+### 9.2.4. Defining and Initializing a Container
+
+- When initializing a container as a copy of another container, the container type and element type of both containers must be identical.
+
+Example:
+
+```c
+list<string> authors = { "Milton", "Shakespeare", "Austen" };
+vector<const char*> articles = { "a", "an", "the" };
+
+list<string> list2(authors); // ok: types match
+deque<string> authList(authors); // error: container types don't match
+vector<string> words(articles); // error: element types must match
+// ok: converts const char* elements to string
+forward_list<string> words(articles.begin(), articles.end());
+```
+
+- We can use iterators to copy a subsequence of a container.
+
+Example:
+
+```c
+// it is an iterator denoting an element in authors
+// copies up to but not including the element denoted by it
+deque<string> authList(authors.begin(), it);
+```
+
+- `array`s have fixed size, so we need to specify the element type and the container size.
+
+Example:
+
+```c
+array<int, 42> // type is: array the holds 42 ints
+array<int, 42>::size_type i; // array type includes element type and size
+array<int>::size_type j; // error: array<int> is not a type
+```
+
+### 9.2.5. Assignment and `swap`
+
+- Unlike built-in `array`, the library `array` type allows assignment when the left-hand and right-hand operands have the same type.
+
+Example:
+
+```c
+array<int, 10> a1 = {0, 1, 2};
+array<int, 10> a2 = {0}; // all elements are 0
+a1 = a2; // replaces elements in a1
+a2 = {0}; // error: cannot assign to an array from a braced list
+// The right-hand operand might have different size from the left-hand operand, the array type doesn't support
+// assign and doesn't allow assignment from a braced list of values.
+```
+
+- Using assign for sequential containers only
+
+Example:
+
+```c
+list<string> names;
+vector<const char*> oldstyle;
+names = oldstyle; // error: container types don't match
+// ok: can convert from const char* to string
+names.assign(oldstyle.cbegin(), oldstyle.cend());
+```
+
+```c
+// equivalent to slist1.clear()
+// followed by slist1.insert(slist1.begin(), 10, "Hiya!");
+list<string> slist1(1); // one element, which is the empty string
+slist1.assign(10, "Hiya!"); // ten elements, each on is Hiya!
+```
+
+- Excepting `array`, `swap` doesn't copy, delete, or insert any elements and is guaranteed to run in constant time.
+- When swapping 2 containers, the elements themselves aren't swapped, but the internal data structures are swapped.
+
+Example:
+
+```c
+vector<string> svec1(10); // vector with 10 elements
+vector<string> svec2(24); // vector with 24 elements
+swap(svec1, svec2);
+```
+
+
+## Exercises
+
+### Exercise 9.12:
+
+How ...
 
