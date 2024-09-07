@@ -8,8 +8,11 @@
     * [9.2.2. Container Type Members](#922-container-type-members)
     * [9.2.4. Defining and Initializing a Container](#924-defining-and-initializing-a-container)
     * [9.2.5. Assignment and `swap`](#925-assignment-and-swap)
+* [9.3. Sequential Container Operations](#93-sequential-container-operations)
+    * [9.3.1 Adding Elements to a Sequential Container](#931-adding-elements-to-a-sequential-container)
 * [9.6. Container Adaptors](#96-container-adaptors)
 * [Exercises](#exercises)
+    * [Exercise 9.12:](#exercise-912)
 
 <!-- vim-markdown-toc -->
 
@@ -138,15 +141,27 @@ vector<string> svec2(24); // vector with 24 elements
 swap(svec1, svec2);
 ```
 
------------ INSERT HERE ------
+## 9.3. Sequential Container Operations
 
------------ END ------
+### 9.3.1 Adding Elements to a Sequential Container
+
+- `push_back`, `push_front`, `emplace_back`, `emplace_front`, `insert`, `emplace`
+- `emplace` functions construct elements in the container. The arguments to these functions must match a constructor for the element type.
+
+```c
+c.emplace_back("123-456", 25, 15.99);
+
+// error: no version of push_back that takes 3 arguments
+c.push_back("123-456", 25, 15.99);
+
+// ok: create a temporary Sales_data object to pass to push_back
+c.push_back(Sales_data("123-456", 25, 15.99));
+```
 
 ## 9.6. Container Adaptors
 
 - A container adaptor takes an existing container type and makes it act like a different type.
 - Each adaptor defines 2 constructors: the default constructor that creates an empty object, and a constructor that takes a containers and initializes the adaptor by copying the given container.
-
 Example:
 
 ```c
@@ -160,4 +175,12 @@ stack<string, vector<string>> str_stk2(svec);
 ``` 
 
 ## Exercises
+
+### Exercise 9.12:
+
+Explain the differences between the constructor that takes a container to copy and the constructor that takes two iterators.
+
+> The constructor that takes a container to copy assumes the container type and element type of both containers must be identical.
+
+> The constructor that takes 2 iterators to copy doesn't require the container type and element type of both containers to be identical. As long as the element type can be converted.
 
