@@ -8,8 +8,8 @@
     * [9.2.2. Container Type Members](#922-container-type-members)
     * [9.2.4. Defining and Initializing a Container](#924-defining-and-initializing-a-container)
     * [9.2.5. Assignment and `swap`](#925-assignment-and-swap)
+* [9.6. Container Adaptors](#96-container-adaptors)
 * [Exercises](#exercises)
-    * [Exercise 9.12:](#exercise-912)
 
 <!-- vim-markdown-toc -->
 
@@ -138,10 +138,26 @@ vector<string> svec2(24); // vector with 24 elements
 swap(svec1, svec2);
 ```
 
+----------- INSERT HERE ------
+
+----------- END ------
+
+## 9.6. Container Adaptors
+
+- A container adaptor takes an existing container type and makes it act like a different type.
+- Each adaptor defines 2 constructors: the default constructor that creates an empty object, and a constructor that takes a containers and initializes the adaptor by copying the given container.
+
+Example:
+
+```c
+stack<int> stk(deq); // copies elements from deq into stk
+
+// empty stack implemented on top of vector
+stack<string, vector<string>> str_stk;
+
+// str_stk2 is implemented on top of vector and initially holds a copy of svec
+stack<string, vector<string>> str_stk2(svec);
+``` 
 
 ## Exercises
-
-### Exercise 9.12:
-
-How ...
 
